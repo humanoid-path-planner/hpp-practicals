@@ -22,7 +22,7 @@ graph.createNode (['grasp', 'placement'])
 graph.createEdge ('placement', 'placement', 'transit', 1, 'placement')
 graph.createEdge ('grasp', 'grasp', 'transfer', 1, 'grasp')
 graph.createEdge ('placement', 'grasp', 'grasp-ball', 1, 'placement')
-graph.createEdge ('grasp', 'placement', 'release-ball', 1, 'placement')
+graph.createEdge ('grasp', 'placement', 'release-ball', 1, 'grasp')
 
 ## Create transformation constraint : ball is in horizontal plane with free
 ## rotation around z
@@ -35,14 +35,15 @@ ps.setConstantRightHandSide ('placement/complement', False)
 
 ## Set constraints of nodes and edges
 graph.setConstraints (node='placement', numConstraints = ['placement'])
-graph.setConstraints (node='grasp', numConstraints = ['grasp'])
-graph.setConstraints (edge='transit',
-                      numConstraints = ['placement', 'placement/complement'])
-graph.setConstraints (edge='transfer', numConstraints = ['grasp'])
-graph.setConstraints (edge='grasp-ball',
-                      numConstraints = ['placement', 'placement/complement'])
-graph.setConstraints (edge='release-ball',
-                      numConstraints = ['placement', 'placement/complement'])
+graph.setConstraints (node='grasp',     numConstraints = ['grasp'])
+
+# These edges are in node 'placement'
+graph.setConstraints (edge='transit',    numConstraints = ['placement/complement'])
+graph.setConstraints (edge='grasp-ball', numConstraints = ['placement/complement'])
+
+# These edges are in node 'grasp'
+graph.setConstraints (edge='transfer',     numConstraints = [])
+graph.setConstraints (edge='release-ball', numConstraints = [])
 
 ## Project initial configuration on state 'placement'
 res, q_init, error = ps.client.manipulation.problem.applyConstraints \
