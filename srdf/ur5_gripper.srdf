@@ -30,7 +30,7 @@
   <disable_collisions link1="ee_link" link2="tool0"/>
 
   <gripper name="gripper" clearance="0.03">
-    <handle_position_in_joint> "0 0 0.055 0.5 -0.5 -0.5 -0.5" </handle_position_in_joint>
+    <handle_position_in_joint> 0 0 0.055 0.5 -0.5 -0.5 -0.5 </handle_position_in_joint>
     <link name="tool0" />
   </gripper>
 </robot>
