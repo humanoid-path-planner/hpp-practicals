@@ -55,6 +55,7 @@ graph.setConstraints (edge='transfer',     numConstraints = [])
 graph.setConstraints (edge='release-ball', numConstraints = [])
 
 ## Project initial configuration on state 'placement'
+graph.initialize()
 res, q_init, error = graph.applyNodeConstraints ('placement', q1)
 q2 = q1 [::]
 q2 [7] = .2
