@@ -17,11 +17,7 @@ class MotionPlanner:
         iter = 0
         while True:
             # RRT begin
-            newConfigs = list()
-
-            # Try connecting the new nodes together
-            for i in range(len(newConfigs)):
-                pass
+            # write your algorithm here
             # RRT end
             # Check if the problem is solved.
             nbCC = self.ps.numberConnectedComponents()
