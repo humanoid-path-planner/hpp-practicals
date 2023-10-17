@@ -97,7 +97,7 @@ script +grasp_ball_in_box.py+ defines the same problem as
 +grasp_ball.py+, except that in the initial configuration, the ball
 is in a box. The resolution takes a lot more time since RRT algorithm
 needs to generate a lot of nodes before the gripper reaches the
-initial configuration of the box.
+ball in the box.
 
 Exercise 2
 ----------
