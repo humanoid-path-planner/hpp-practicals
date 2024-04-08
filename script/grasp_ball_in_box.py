@@ -1,14 +1,14 @@
-from hpp.corbaserver.manipulation import ConstraintGraph
 from hpp.corbaserver import Client  # noqa: F401
+from hpp.corbaserver.manipulation import ConstraintGraph
 from manipulation import (
+    Box,
+    Ground,
+    PathPlayer,  # noqa: F401
+    Pokeball,
+    ps,
     robot,
     vf,
-    ps,
-    Ground,
-    Box,
-    Pokeball,
 )
-from manipulation import PathPlayer  # noqa: F401
 
 vf.loadEnvironmentModel(Ground, "ground")
 vf.loadEnvironmentModel(Box, "box")

@@ -1,15 +1,15 @@
 from hpp import Transform
 from hpp.corbaserver.manipulation import ConstraintGraph, Constraints
 from manipulation import (
+    Ground,
+    PathPlayer,  # noqa: F401
+    Pokeball,
+    ballName,
+    gripperName,
+    ps,
     robot,
     vf,
-    ps,
-    Ground,
-    Pokeball,
-    gripperName,
-    ballName,
 )
-from manipulation import PathPlayer  # noqa: F401
 
 vf.loadEnvironmentModel(Ground, "ground")
 vf.loadObjectModel(Pokeball, "pokeball")

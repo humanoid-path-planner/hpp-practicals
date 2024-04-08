@@ -1,8 +1,8 @@
-from hpp.corbaserver.practicals.manipulation.ur5 import Robot
-from hpp.corbaserver.manipulation import ProblemSolver, Client
-from hpp.gepetto.manipulation import ViewerFactory
-from hpp.gepetto import PathPlayer  # noqa: F401
 from hpp.corbaserver import loadServerPlugin
+from hpp.corbaserver.manipulation import Client, ProblemSolver
+from hpp.corbaserver.practicals.manipulation.ur5 import Robot
+from hpp.gepetto import PathPlayer  # noqa: F401
+from hpp.gepetto.manipulation import ViewerFactory
 
 loadServerPlugin("corbaserver", "manipulation-corba.so")
 Client().problem.resetProblem()
@@ -12,7 +12,7 @@ Robot.urdfSuffix = ""
 Robot.srdfSuffix = ""
 
 
-class Pokeball(object):
+class Pokeball:
     rootJointType = "freeflyer"
     packageName = "hpp_practicals"
     meshPackageName = "hpp_practicals"
@@ -21,7 +21,7 @@ class Pokeball(object):
     srdfSuffix = ""
 
 
-class Ground(object):
+class Ground:
     rootJointType = "anchor"
     packageName = "hpp_practicals"
     urdfName = "ur_benchmark/ground"
@@ -30,7 +30,7 @@ class Ground(object):
     srdfSuffix = ""
 
 
-class Box(object):
+class Box:
     rootJointType = "anchor"
     packageName = "hpp_practicals"
     urdfName = "ur_benchmark/box"
