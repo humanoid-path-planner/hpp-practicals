@@ -11,29 +11,31 @@ from pyhpp.constraints import (
     Transformation,
     ComparisonTypes,
     ComparisonType,
-    BySubstitution,
     Implicit,
 )
 
-urdfFilename = (
+urdf_ur5 = (
     "package://example-robot-data/robots/ur_description/urdf/ur5_gripper.urdf"
 )
-srdfFilename = (
+srdf_ur5 = (
     "package://example-robot-data/robots/ur_description/srdf/ur5_gripper.srdf"
 )
 
-urdfFilenameBall = "package://hpp_environments/urdf/ur_benchmark/pokeball.urdf"
-srdfFilenameBall = "package://hpp_environments/srdf/ur_benchmark/pokeball.srdf"
+urdf_ball = "package://hpp_environments/urdf/ur_benchmark/pokeball.urdf"
+srdf_ball = "package://hpp_environments/srdf/ur_benchmark/pokeball.srdf"
 
-r0_pose = SE3(rotation=np.identity(3), translation=np.array([0, 0, 0]))
-r1_pose = SE3(rotation=np.identity(3), translation=np.array([0, 0, 0]))
+urdf_ground = "package://hpp_practicals/urdf/ur_benchmark/ground.urdf"
+srdf_ground = "package://hpp_practicals/srdf/ur_benchmark/ground.srdf"
 
 robot = Device("bot")
 
-urdf.loadModel(robot, 0, "ur5", "anchor", urdfFilename, srdfFilename, r0_pose)
+urdf.loadModel(robot, 0, "ur5", "anchor", urdf_ur5, srdf_ur5, SE3.Identity())
 urdf.loadModel(
-    robot, 0, "pokeball", "freeflyer", urdfFilenameBall, srdfFilenameBall, r1_pose
+    robot, 0, "pokeball", "freeflyer", urdf_ball, srdf_ball, SE3.Identity()
 )
+
+urdf.loadModel(robot, 0, "ground", "anchor", urdf_ground, srdf_ground, SE3.Identity())
+
 
 ballName = "pokeball/root_joint"
 robot.setJointBounds(
@@ -89,7 +91,7 @@ m = [
 ]
 q = Quaternion(0, 0, 0, 1)
 ballGround = SE3(q, np.array([0, 0, 0.025]))
-pc = Transformation.create(
+pc = Transformation(
     "placement_constraint", robot.asPinDevice(), joint2, Id, ballGround, m
 )
 cts = ComparisonTypes()
@@ -99,7 +101,7 @@ cts[:] = (
     ComparisonType.EqualToZero,
 )
 implicit_mask = [True, True, True]
-placement_constraint = Implicit.create(pc, cts, implicit_mask)
+placement_constraint = Implicit(pc, cts, implicit_mask)
 
 
 m = [
@@ -111,7 +113,7 @@ m = [
     True,
 ]
 
-pc = Transformation.create(
+pc = Transformation(
     "placement__complement_constraint", robot.asPinDevice(), joint2, Id, ballGround, m
 )
 cts = ComparisonTypes()
@@ -121,7 +123,7 @@ cts[:] = (
     ComparisonType.Equality,
 )
 implicit_mask = [True, True, True]
-placement_complement_constraint = Implicit.create(pc, cts, implicit_mask)
+placement_complement_constraint = Implicit(pc, cts, implicit_mask)
 
 # Create constraint of relative position of the ball in the gripper when ball
 # is grasped
@@ -129,7 +131,7 @@ q = Quaternion(0.5, 0.5, -0.5, 0.5)
 ballInGripper = SE3(q, np.array([0, 0.137, 0]))
 m = Mask()
 m[:] = (True,) * 6
-pc = RelativeTransformation.create(
+pc = RelativeTransformation(
     "grasp", robot.asPinDevice(), joint1, joint2, ballInGripper, Id, m
 )
 cts = ComparisonTypes()
@@ -141,7 +143,7 @@ cts[:] = (
     ComparisonType.EqualToZero,
     ComparisonType.EqualToZero,
 )
-grasp_constraint = Implicit.create(pc, cts, m)
+grasp_constraint = Implicit(pc, cts, m)
 
 problem.setConstantRightHandSide(placement_constraint, True)
 problem.setConstantRightHandSide(placement_complement_constraint, False)
@@ -177,9 +179,6 @@ problem.initConfig(q_init)
 problem.addGoalConfig(q_goal)
 problem.constraintGraph(graph)
 
-manipulationPlanner = ManipulationPlanner(problem)
-manipulationPlanner.maxIterations(5000)
-manipulationPlanner.solve()
 #v = Viewer (robot)
 # v.playPath (v)
 

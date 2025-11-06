@@ -155,13 +155,13 @@ robot.model().getJointId(name)
 #  relativeTransform :    relative transformation of joint2 frame in joint1 frame,
 #  mask :    list of 6 Boolean to select active coordinates of the constraint.
 #  return : function that can be used to create constraints
-pc = Transformation.create(name, robot, joint2, joint1, relativeTransform, mask)
+pc = Transformation(name, robot, joint2, joint1, relativeTransform, mask)
 
 # create an implicit constraint
 # f : function describing the constraint,
 # cts: ComparisonTypes mask
 # mask : mask 
-constraint = Implicit.create(f, cts, mask)
+constraint = Implicit(f, cts, mask)
 
 # Create states of the constraint graph
 #
