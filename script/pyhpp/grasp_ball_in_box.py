@@ -53,26 +53,15 @@ robot.setJointBounds(
 urdfFilenameBox = "package://hpp_environments/urdf/ur_benchmark/box.urdf"
 srdfFilenameBox = "package://hpp_environments/srdf/ur_benchmark/box.srdf"
 
+
+q = Quaternion(0, 0, 0, 1)
+box_pos = SE3(q, np.array([0.3, 0, 0.04]))
 urdf.loadModel(
-    robot, 0, "box", "anchor", urdfFilenameBox, srdfFilenameBox, SE3.Identity()
+    robot, 0, "box", "anchor", urdfFilenameBox, srdfFilenameBox, box_pos
 )
 
-model = robot.asPinDevice().model()
-data = robot.asPinDevice().data()
-
-obj = ["box/base_link_0", "box/base_link_1", "box/base_link_2", "box/base_link_3"]
-positions = [
-    [0.3 + 0.04, 0, 0.04],
-    [0.3 - 0.04, 0, 0.04],
-    [0.3, 0.04, 0.04],
-    [0.3, -0.04, 0.04]
-]
-for collision in robot.asPinDevice().geomModel().geometryObjects:
-    if collision.name in obj:
-        collision.placement = SE3(np.eye(3), np.array(positions[obj.index(collision.name)]))
-for visual in robot.asPinDevice().visualModel().geometryObjects:
-    if visual.name in obj:
-        visual.placement = SE3(np.eye(3), np.array(positions[obj.index(visual.name)]))
+model = robot.model()
+data = robot.data()
 
 problem = Problem(robot)
 
@@ -82,7 +71,7 @@ q1 = [0, -1.57, 1.57, 0, 0, 0, 0.3, 0, 0.025, 0, 0, 0, 1]
 graph = Graph("graph", robot, problem)
 state_placement = graph.createState("placement", False, 0)
 
-problem.pathValidation = Dichotomy(robot.asPinDevice(), 0)
+problem.pathValidation = Dichotomy(robot, 0)
 problem.pathProjector = ProgressiveProjector(
     problem.distance(), problem.steeringMethod(), 0.01
 )

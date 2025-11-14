@@ -92,7 +92,7 @@ m = [
 q = Quaternion(0, 0, 0, 1)
 ballGround = SE3(q, np.array([0, 0, 0.025]))
 pc = Transformation(
-    "placement_constraint", robot.asPinDevice(), joint2, Id, ballGround, m
+    "placement_constraint", robot, joint2, Id, ballGround, m
 )
 cts = ComparisonTypes()
 cts[:] = (
@@ -114,7 +114,7 @@ m = [
 ]
 
 pc = Transformation(
-    "placement__complement_constraint", robot.asPinDevice(), joint2, Id, ballGround, m
+    "placement__complement_constraint", robot, joint2, Id, ballGround, m
 )
 cts = ComparisonTypes()
 cts[:] = (
@@ -132,7 +132,7 @@ ballInGripper = SE3(q, np.array([0, 0.137, 0]))
 m = Mask()
 m[:] = (True,) * 6
 pc = RelativeTransformation(
-    "grasp", robot.asPinDevice(), joint1, joint2, ballInGripper, Id, m
+    "grasp", robot, joint1, joint2, ballInGripper, Id, m
 )
 cts = ComparisonTypes()
 cts[:] = (
@@ -159,7 +159,7 @@ graph.addNumericalConstraintsToTransition(transition_grasp_ball, [placement_comp
 # graph.addConstraints(edge="transfer", constraints=Constraints())
 # graph.addConstraints(edge="release-ball", constraints=Constraints())
 
-problem.pathValidation = Dichotomy(robot.asPinDevice(), 0)
+problem.pathValidation = Dichotomy(robot, 0)
 problem.pathProjector = ProgressiveProjector(
     problem.distance(), problem.steeringMethod(), 0.01
 )
@@ -193,8 +193,8 @@ for i in range(100):
 
 if res:
     robot.currentConfiguration(q3)
-    gripperPose = Transform(robot.asPinDevice().getJointPosition('ur5/wrist_3_joint'))
-    ballPose = Transform(robot.asPinDevice().getJointPosition(ballName))
+    gripperPose = Transform(robot.getJointPosition('ur5/wrist_3_joint'))
+    ballPose = Transform(robot.getJointPosition(ballName))
     gripperGraspsBall = gripperPose.inverse() * ballPose
     gripperAboveBall = Transform(gripperGraspsBall)
     gripperAboveBall.translation[2] += 0.1
