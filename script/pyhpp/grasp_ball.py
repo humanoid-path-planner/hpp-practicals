@@ -21,8 +21,8 @@ srdf_ur5 = (
     "package://example-robot-data/robots/ur_description/srdf/ur5_gripper.srdf"
 )
 
-urdf_ball = "package://hpp_environments/urdf/ur_benchmark/pokeball.urdf"
-srdf_ball = "package://hpp_environments/srdf/ur_benchmark/pokeball.srdf"
+urdf_ball = "package://hpp_practicals/urdf/ur_benchmark/pokeball.urdf"
+srdf_ball = "package://hpp_practicals/srdf/ur_benchmark/pokeball.srdf"
 
 urdf_ground = "package://hpp_practicals/urdf/ur_benchmark/ground.urdf"
 srdf_ground = "package://hpp_practicals/srdf/ur_benchmark/ground.srdf"
