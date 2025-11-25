@@ -77,6 +77,8 @@ problem.pathProjector = ProgressiveProjector(
 )
 graph.initialize()
 q1 = np.array(q1)
+robot.currentConfiguration(q1)
+
 # Project initial configuration on state 'placement'
 res, q_init, error = graph.applyStateConstraints(state_placement, q1)
 q2 = q1[::].copy()

@@ -68,8 +68,8 @@ graph = Graph("graph", robot, problem)
 #  Warning the order of the nodes is important. When checking in which node
 #  a configuration lies, node constraints will be checked in the order of node
 #  creation.
-state_placement = graph.createState("placement", False, 0)
 state_grasp = graph.createState("grasp", False, 0)
+state_placement = graph.createState("placement", False, 0)
 
 transition_transit = graph.createTransition(state_placement, state_placement, "transit", 1, state_placement)
 transition_transfer = graph.createTransition(state_grasp, state_grasp, "transfer", 1, state_grasp)
@@ -106,7 +106,7 @@ placement_constraint = Implicit(pc, cts, implicit_mask)
 
 m = [
     True,
-    False,
+    True,
     False,
     False,
     False,
@@ -155,17 +155,15 @@ graph.addNumericalConstraintsToState(state_grasp, [grasp_constraint])
 graph.addNumericalConstraintsToTransition(transition_transit, [placement_complement_constraint])
 graph.addNumericalConstraintsToTransition(transition_grasp_ball, [placement_complement_constraint])
 
-# # These edges are in node 'grasp'
-# graph.addConstraints(edge="transfer", constraints=Constraints())
-# graph.addConstraints(edge="release-ball", constraints=Constraints())
-
 problem.pathValidation = Dichotomy(robot, 0)
 problem.pathProjector = ProgressiveProjector(
-    problem.distance(), problem.steeringMethod(), 0.01
+    problem.distance(), problem.steeringMethod(), 0.1
 )
 graph.initialize()
 
 q1 = np.array(q1)
+robot.currentConfiguration(q1)
+
 # Project initial configuration on state 'placement'
 res, q_init, error = graph.applyStateConstraints(state_placement, q1)
 q2 = q1[::]
@@ -179,22 +177,24 @@ problem.initConfig(q_init)
 problem.addGoalConfig(q_goal)
 problem.constraintGraph(graph)
 
+
+manipulationPlanner = ManipulationPlanner(problem)
 #v = Viewer (robot)
 # v.playPath (v)
 
 
-# Build relative position of the ball with respect to the gripper
-for i in range(100):
-    q = problem.configurationShooter().shoot()
-    res, q3, err = graph.generateTargetConfig(transition_grasp_ball, q_init, q)
-    configValid, report = problem.isConfigValid(q3)
-    if res and configValid:
-        break
+# # Build relative position of the ball with respect to the gripper
+# for i in range(100):
+#     q = problem.configurationShooter().shoot()
+#     res, q3, err = graph.generateTargetConfig(transition_grasp_ball, q_init, q)
+#     configValid, report = problem.isConfigValid(q3)
+#     if res and configValid:
+#         break
 
-if res:
-    robot.currentConfiguration(q3)
-    gripperPose = Transform(robot.getJointPosition('ur5/wrist_3_joint'))
-    ballPose = Transform(robot.getJointPosition(ballName))
-    gripperGraspsBall = gripperPose.inverse() * ballPose
-    gripperAboveBall = Transform(gripperGraspsBall)
-    gripperAboveBall.translation[2] += 0.1
+# if res:
+#     robot.currentConfiguration(q3)
+#     gripperPose = Transform(robot.getJointPosition('ur5/wrist_3_joint'))
+#     ballPose = Transform(robot.getJointPosition(ballName))
+#     gripperGraspsBall = gripperPose.inverse() * ballPose
+#     gripperAboveBall = Transform(gripperGraspsBall)
+#     gripperAboveBall.translation[2] += 0.1

@@ -116,7 +116,6 @@ roadmap.nearestNode(config, connectedComponentId)
 #
 #  return:     the generated path
 problem.steeringMethod().steer (q1, q2)
-problem.steeringMethod(q1, q2)
 
 # Validate generated path by steering method
 #

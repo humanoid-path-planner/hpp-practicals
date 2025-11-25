@@ -22,8 +22,8 @@ urdf.loadModel(robot, 0, "obstacles", "anchor", "package://hpp_environments/urdf
 
 
 # Define initial and goal configurations
-qInit = np.array([0.2, -1.57, -1.8, 0, 0.8, 0])
-qGoal = np.array([1.57, -1.57, -1.8, 0, 0.8, 0])
+q1 = np.array([0.2, -1.57, -1.8, 0, 0.8, 0])
+q2 = np.array([1.57, -1.57, -1.8, 0, 0.8, 0])
 
 # Setup problem and RRT components
 problem = Problem(robot)
@@ -33,13 +33,13 @@ weighedDistance = WeighedDistance(robot)
 
 # Initialize roadmap
 roadmap = Roadmap(weighedDistance, robot)
-roadmap.initNode(qInit)
-roadmap.addGoalNode(qGoal)
+roadmap.initNode(q1)
+roadmap.addGoalNode(q2)
 
 m = MotionPlanner(robot, problem, roadmap)
 path = m.solveBiRRT(maxIter=1000)
 
 # v = Viewer(robot)
-# v(qInit)
-# v(qGoal)
+# v(q1)
+# v(q2)
 # v.playPath(path)
