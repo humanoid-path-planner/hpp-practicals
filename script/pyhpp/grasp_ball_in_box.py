@@ -1,17 +1,17 @@
-from pyhpp.manipulation import Device, urdf, Graph, Problem, ProgressiveProjector, ManipulationPlanner
-from pyhpp.core import ConfigurationShooter, Dichotomy  # noqa: F401
 import numpy as np
-from pinocchio import SE3, StdVec_Bool as Mask, Quaternion
-
-from pyhpp.gepetto.viewer import Viewer
-
-
-urdf_ur5 = (
-    "package://example-robot-data/robots/ur_description/urdf/ur5_gripper.urdf"
+from pinocchio import SE3, Quaternion
+from pyhpp.core import ConfigurationShooter, Dichotomy  # noqa: F401
+from pyhpp.manipulation import (
+    Device,
+    Graph,
+    ManipulationPlanner,
+    Problem,
+    ProgressiveProjector,
+    urdf,
 )
-srdf_ur5 = (
-    "package://example-robot-data/robots/ur_description/srdf/ur5_gripper.srdf"
-)
+
+urdf_ur5 = "package://example-robot-data/robots/ur_description/urdf/ur5_gripper.urdf"
+srdf_ur5 = "package://example-robot-data/robots/ur_description/srdf/ur5_gripper.srdf"
 
 urdf_ball = "package://hpp_practicals/urdf/ur_benchmark/pokeball.urdf"
 srdf_ball = "package://hpp_practicals/srdf/ur_benchmark/pokeball.srdf"
@@ -22,9 +22,7 @@ srdf_ground = "package://hpp_practicals/srdf/ur_benchmark/ground.srdf"
 robot = Device("bot")
 
 urdf.loadModel(robot, 0, "ur5", "anchor", urdf_ur5, srdf_ur5, SE3.Identity())
-urdf.loadModel(
-    robot, 0, "pokeball", "freeflyer", urdf_ball, srdf_ball, SE3.Identity()
-)
+urdf.loadModel(robot, 0, "pokeball", "freeflyer", urdf_ball, srdf_ball, SE3.Identity())
 
 urdf.loadModel(robot, 0, "ground", "anchor", urdf_ground, srdf_ground, SE3.Identity())
 
@@ -56,9 +54,7 @@ srdfFilenameBox = "package://hpp_practicals/srdf/ur_benchmark/box.srdf"
 
 q = Quaternion(0, 0, 0, 1)
 box_pos = SE3(q, np.array([0.3, 0, 0.04]))
-urdf.loadModel(
-    robot, 0, "box", "anchor", urdfFilenameBox, srdfFilenameBox, box_pos
-)
+urdf.loadModel(robot, 0, "box", "anchor", urdfFilenameBox, srdfFilenameBox, box_pos)
 
 model = robot.model()
 data = robot.data()
@@ -94,5 +90,5 @@ problem.constraintGraph(graph)
 manipulationPlanner = ManipulationPlanner(problem)
 manipulationPlanner.maxIterations(5000)
 # manipulationPlanner.solve()
-#v = Viewer (robot)
+# v = Viewer (robot)
 # v.playPath (v)

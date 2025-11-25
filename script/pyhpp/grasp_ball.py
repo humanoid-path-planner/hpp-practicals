@@ -1,25 +1,25 @@
-from pyhpp.manipulation import Device, urdf, Graph, Problem, ProgressiveProjector, ManipulationPlanner
-from pyhpp.core import ConfigurationShooter, Dichotomy  # noqa: F401
 import numpy as np
-from pinocchio import SE3, StdVec_Bool as Mask, Quaternion
-
-from pyhpp.gepetto.viewer import Viewer
-from hpp import Transform
-
+from pinocchio import SE3, Quaternion
+from pinocchio import StdVec_Bool as Mask
 from pyhpp.constraints import (
+    ComparisonType,
+    ComparisonTypes,
+    Implicit,
     RelativeTransformation,
     Transformation,
-    ComparisonTypes,
-    ComparisonType,
-    Implicit,
+)
+from pyhpp.core import ConfigurationShooter, Dichotomy  # noqa: F401
+from pyhpp.manipulation import (
+    Device,
+    Graph,
+    ManipulationPlanner,
+    Problem,
+    ProgressiveProjector,
+    urdf,
 )
 
-urdf_ur5 = (
-    "package://example-robot-data/robots/ur_description/urdf/ur5_gripper.urdf"
-)
-srdf_ur5 = (
-    "package://example-robot-data/robots/ur_description/srdf/ur5_gripper.srdf"
-)
+urdf_ur5 = "package://example-robot-data/robots/ur_description/urdf/ur5_gripper.urdf"
+srdf_ur5 = "package://example-robot-data/robots/ur_description/srdf/ur5_gripper.srdf"
 
 urdf_ball = "package://hpp_practicals/urdf/ur_benchmark/pokeball.urdf"
 srdf_ball = "package://hpp_practicals/srdf/ur_benchmark/pokeball.srdf"
@@ -30,9 +30,7 @@ srdf_ground = "package://hpp_practicals/srdf/ur_benchmark/ground.srdf"
 robot = Device("bot")
 
 urdf.loadModel(robot, 0, "ur5", "anchor", urdf_ur5, srdf_ur5, SE3.Identity())
-urdf.loadModel(
-    robot, 0, "pokeball", "freeflyer", urdf_ball, srdf_ball, SE3.Identity()
-)
+urdf.loadModel(robot, 0, "pokeball", "freeflyer", urdf_ball, srdf_ball, SE3.Identity())
 
 urdf.loadModel(robot, 0, "ground", "anchor", urdf_ground, srdf_ground, SE3.Identity())
 
@@ -71,10 +69,18 @@ graph = Graph("graph", robot, problem)
 state_grasp = graph.createState("grasp", False, 0)
 state_placement = graph.createState("placement", False, 0)
 
-transition_transit = graph.createTransition(state_placement, state_placement, "transit", 1, state_placement)
-transition_transfer = graph.createTransition(state_grasp, state_grasp, "transfer", 1, state_grasp)
-transition_grasp_ball = graph.createTransition(state_placement, state_grasp, "grasp-ball", 1, state_placement)
-transition_release_ball = graph.createTransition(state_grasp, state_placement, "release-ball", 1, state_grasp)
+transition_transit = graph.createTransition(
+    state_placement, state_placement, "transit", 1, state_placement
+)
+transition_transfer = graph.createTransition(
+    state_grasp, state_grasp, "transfer", 1, state_grasp
+)
+transition_grasp_ball = graph.createTransition(
+    state_placement, state_grasp, "grasp-ball", 1, state_placement
+)
+transition_release_ball = graph.createTransition(
+    state_grasp, state_placement, "release-ball", 1, state_grasp
+)
 
 
 joint2 = robot.model().getJointId("pokeball/root_joint")
@@ -91,9 +97,7 @@ m = [
 ]
 q = Quaternion(0, 0, 0, 1)
 ballGround = SE3(q, np.array([0, 0, 0.025]))
-pc = Transformation(
-    "placement_constraint", robot, joint2, Id, ballGround, m
-)
+pc = Transformation("placement_constraint", robot, joint2, Id, ballGround, m)
 cts = ComparisonTypes()
 cts[:] = (
     ComparisonType.EqualToZero,
@@ -131,9 +135,7 @@ q = Quaternion(0.5, 0.5, -0.5, 0.5)
 ballInGripper = SE3(q, np.array([0, 0.137, 0]))
 m = Mask()
 m[:] = (True,) * 6
-pc = RelativeTransformation(
-    "grasp", robot, joint1, joint2, ballInGripper, Id, m
-)
+pc = RelativeTransformation("grasp", robot, joint1, joint2, ballInGripper, Id, m)
 cts = ComparisonTypes()
 cts[:] = (
     ComparisonType.EqualToZero,
@@ -152,8 +154,12 @@ problem.setConstantRightHandSide(placement_complement_constraint, False)
 graph.addNumericalConstraintsToState(state_placement, [placement_constraint])
 graph.addNumericalConstraintsToState(state_grasp, [grasp_constraint])
 
-graph.addNumericalConstraintsToTransition(transition_transit, [placement_complement_constraint])
-graph.addNumericalConstraintsToTransition(transition_grasp_ball, [placement_complement_constraint])
+graph.addNumericalConstraintsToTransition(
+    transition_transit, [placement_complement_constraint]
+)
+graph.addNumericalConstraintsToTransition(
+    transition_grasp_ball, [placement_complement_constraint]
+)
 
 problem.pathValidation = Dichotomy(robot, 0)
 problem.pathProjector = ProgressiveProjector(
@@ -179,7 +185,7 @@ problem.constraintGraph(graph)
 
 
 manipulationPlanner = ManipulationPlanner(problem)
-#v = Viewer (robot)
+# v = Viewer (robot)
 # v.playPath (v)
 
 

@@ -160,7 +160,7 @@ pc = Transformation(name, robot, joint2, joint1, relativeTransform, mask)
 # create an implicit constraint
 # f : function describing the constraint,
 # cts: ComparisonTypes mask
-# mask : mask 
+# mask : mask
 constraint = Implicit(f, cts, mask)
 
 # Create states of the constraint graph

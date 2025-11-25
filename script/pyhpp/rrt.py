@@ -1,10 +1,9 @@
-from motion_planner import MotionPlanner
-
 import numpy as np
+from motion_planner import MotionPlanner
 from pinocchio import SE3
-from pyhpp.pinocchio import Device, urdf
 from pyhpp.core import Problem, Roadmap, WeighedDistance
-from pyhpp.gepetto.viewer import Viewer
+from pyhpp.pinocchio import Device, urdf
+
 # Robot configuration
 urdfFilename = "package://example-robot-data/robots/ur_description/urdf/ur5_joint_limited_robot.urdf"
 srdfFilename = "package://example-robot-data/robots/ur_description/srdf/ur5_joint_limited_robot.srdf"
@@ -16,9 +15,33 @@ robot = Device("ur5")
 urdf.loadModel(robot, 0, "r0", "anchor", urdfFilename, srdfFilename, SE3.Identity())
 
 
-urdf.loadModel(robot, 0, "table", "anchor", "package://hpp_environments/urdf/ur_benchmark/table.urdf", "", SE3.Identity())
-urdf.loadModel(robot, 0, "wall", "anchor", "package://hpp_environments/urdf/ur_benchmark/wall.urdf", "", SE3.Identity())
-urdf.loadModel(robot, 0, "obstacles", "anchor", "package://hpp_environments/urdf/ur_benchmark/obstacles.urdf", "", SE3.Identity())
+urdf.loadModel(
+    robot,
+    0,
+    "table",
+    "anchor",
+    "package://hpp_environments/urdf/ur_benchmark/table.urdf",
+    "",
+    SE3.Identity(),
+)
+urdf.loadModel(
+    robot,
+    0,
+    "wall",
+    "anchor",
+    "package://hpp_environments/urdf/ur_benchmark/wall.urdf",
+    "",
+    SE3.Identity(),
+)
+urdf.loadModel(
+    robot,
+    0,
+    "obstacles",
+    "anchor",
+    "package://hpp_environments/urdf/ur_benchmark/obstacles.urdf",
+    "",
+    SE3.Identity(),
+)
 
 
 # Define initial and goal configurations

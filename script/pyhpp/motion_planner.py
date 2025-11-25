@@ -32,4 +32,3 @@ class MotionPlanner:
         if finished:
             path = self.problem.target().computePath(self.roadmap)
             return path
-        

@@ -1,4 +1,12 @@
-from grasp_ball import graph, problem, q_goal, q_init, robot, transition_grasp_ball, v  # noqa: F401
+from grasp_ball import (  # noqa: F401
+    graph,
+    problem,
+    q_goal,
+    q_init,
+    robot,
+    transition_grasp_ball,
+    v,
+)
 
 # Warning, this script is provided only as an example. The loop below never
 # ends since all direct paths between q_init and q1 are in collision.
