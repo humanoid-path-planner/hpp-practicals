@@ -27,13 +27,13 @@ You should see the message "Method solveBiRRT is not implemented yet". Open file
 
 Before starting
 ---------------
-Unlike the old CORBA server implementation, HPP objects can now be created and accessed direclty using boost python bindings.
+HPP objects can be created and accessed direclty using boost python bindings.
 A roadmap is compsed of nodes and edges. Nodes contain configurations. Edges contain paths. The roadmap can be extended using methods
 
 * +roadmap.addNode+,
 * +roadmap.addEdge+.
 
-Calls to method +problem.steeringMethod.steer+ create a new path between two configurations. This path is stored in a vector on the server side and can be accessed by the
+Calls to method +problem.steeringMethod.steer+ create a new path between two configurations. This path is stored in a vector and can be accessed by the
 index in the vector.
 
 See Section "Some useful methods" below.
@@ -92,7 +92,7 @@ Some useful methods
 #
 # Note for all the methods below,
 #   - configurations are represented by lists of float,
-#   - "index of the path" means index in the vector of paths stored on the server side,
+#   - "index of the path" means index in the vector of paths,
 #
 
 
