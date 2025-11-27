@@ -1,35 +1,68 @@
-from hpp.gepetto import PathPlayer, ViewerFactory  # noqa: F401
+import numpy as np
 from motion_planner import MotionPlanner
+from pinocchio import SE3
+from pyhpp.core import Problem, Roadmap, WeighedDistance
+from pyhpp.pinocchio import Device, urdf
 
-from hpp.corbaserver import Client, ProblemSolver
-from hpp.corbaserver.practicals.ur5 import Robot
+# Robot configuration
+urdfFilename = "package://example-robot-data/robots/ur_description/urdf/ur5_joint_limited_robot.urdf"
+srdfFilename = "package://example-robot-data/robots/ur_description/srdf/ur5_joint_limited_robot.srdf"
 
-Client().problem.resetProblem()
+# Initialize robot and viewer
+robot = Device("ur5")
 
-robot = Robot("ur5")
-ps = ProblemSolver(robot)
+# Add robot and obstacles to scene
+urdf.loadModel(robot, 0, "r0", "anchor", urdfFilename, srdfFilename, SE3.Identity())
 
-vf = ViewerFactory(ps)
 
-vf.loadObstacleModel(
-    "package://hpp_practicals/urdf/ur_benchmark/obstacles.urdf", "obstacles"
+urdf.loadModel(
+    robot,
+    0,
+    "table",
+    "anchor",
+    "package://hpp_environments/urdf/ur_benchmark/table.urdf",
+    "",
+    SE3.Identity(),
 )
-vf.loadObstacleModel("package://hpp_practicals/urdf/ur_benchmark/table.urdf", "table")
-vf.loadObstacleModel("package://hpp_practicals/urdf/ur_benchmark/wall.urdf", "wall")
+urdf.loadModel(
+    robot,
+    0,
+    "wall",
+    "anchor",
+    "package://hpp_environments/urdf/ur_benchmark/wall.urdf",
+    "",
+    SE3.Identity(),
+)
+urdf.loadModel(
+    robot,
+    0,
+    "obstacles",
+    "anchor",
+    "package://hpp_environments/urdf/ur_benchmark/obstacles.urdf",
+    "",
+    SE3.Identity(),
+)
 
-q1 = [0, -1.57, 1.57, 0, 0, 0]
-q2 = [0.2, -1.57, -1.8, 0, 0.8, 0]
-q3 = [1.57, -1.57, -1.8, 0, 0.8, 0]
 
-ps.setInitialConfig(q2)
-ps.addGoalConfig(q3)
+# Define initial and goal configurations
+q1 = np.array([0.2, -1.57, -1.8, 0, 0.8, 0])
+q2 = np.array([1.57, -1.57, -1.8, 0, 0.8, 0])
 
+# Setup problem and RRT components
+problem = Problem(robot)
+configurationShooter = problem.configurationShooter()
+steer = problem.steeringMethod()
+weighedDistance = WeighedDistance(robot)
 
-m = MotionPlanner(robot, ps)
-pathId = m.solveBiRRT(maxIter=1000)
+# Initialize roadmap
+roadmap = Roadmap(weighedDistance, robot)
+roadmap.initNode(q1)
+roadmap.addGoalNode(q2)
 
-# v = vf.createViewer ()
-# v (q2)
-# v (q3)
-# pp = PathPlayer (v)
-# pp (pathId)
+m = MotionPlanner(robot, problem, roadmap)
+path = m.solveBiRRT(maxIter=1000)
+
+# v = Viewer(robot)
+# v(q1)
+# v(q2)
+# v.playPath(path)

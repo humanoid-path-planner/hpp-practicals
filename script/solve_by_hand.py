@@ -1,4 +1,12 @@
-from grasp_ball import graph, ps, q_goal, q_init, robot, vf  # noqa: F401
+from grasp_ball import (  # noqa: F401
+    graph,
+    problem,
+    q_goal,
+    q_init,
+    robot,
+    transition_grasp_ball,
+    v,
+)
 
 # Warning, this script is provided only as an example. The loop below never
 # ends since all direct paths between q_init and q1 are in collision.
@@ -8,15 +16,15 @@ while not success:
     paths = list()
     print(f"trial {trial}")
     trial += 1
-    q = robot.shootRandomConfig()
-    res, q1, err = graph.generateTargetConfig("grasp-ball", q_init, q)
+    q = problem.configurationShooter().shoot()
+    res, q1, err = graph.generateTargetConfig(transition_grasp_ball, q_init, q)
     if not res:
         continue
-    res, msg = robot.isConfigValid(q1)
+    res, msg = problem.isConfigValid(q1)
     if not res:
         continue
-    res, pid, msg = ps.directPath(q_init, q1, True)
-    paths.append(pid)
+    res, path, msg = problem.directPath(q_init, q1, True)
+    paths.append(path)
     if not res:
         continue
     success = True

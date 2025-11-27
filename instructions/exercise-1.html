@@ -1,9 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
     "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
-<meta name="generator" content="AsciiDoc 8.6.9" />
+<meta name="generator" content="AsciiDoc 10.2.0" />
 <title>Programming RRT algorithm</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
@@ -435,7 +436,7 @@ thead, p.table.header {
 p.table {
   margin-top: 0;
 }
-/* Because the table frame attribute is overriden by CSS in most browsers. */
+/* Because the table frame attribute is overridden by CSS in most browsers. */
 div.tableblock > table[frame="void"] {
   border-style: none;
 }
@@ -749,24 +750,18 @@ asciidoc.install(2);
 <div class="sect1">
 <h2 id="_introduction">Introduction</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>Open a terminal cd into hpp-practicals directory and open 3 tab by typing CTRL+SHIFT+T twice.
+<div class="paragraph"><p>Open a terminal cd into hpp-practicals directory and open 2 tab by typing CTRL+SHIFT+T.
 In the first terminal, type</p></div>
 <div class="listingblock">
-<div class="content"><!-- Generator: GNU source-highlight 3.1.8
+<div class="content"><!-- Generator: GNU source-highlight
 by Lorenzo Bettini
 http://www.lorenzobettini.it
 http://www.gnu.org/software/src-highlite -->
-<pre><tt>hppcorbaserver</tt></pre></div></div>
+<pre><tt>gepetto-gui -c basic
+</tt></pre></div></div>
 <div class="paragraph"><p>In the second terminal, type</p></div>
 <div class="listingblock">
-<div class="content"><!-- Generator: GNU source-highlight 3.1.8
-by Lorenzo Bettini
-http://www.lorenzobettini.it
-http://www.gnu.org/software/src-highlite -->
-<pre><tt>gepetto-gui -c basic</tt></pre></div></div>
-<div class="paragraph"><p>In the third terminal, type</p></div>
-<div class="listingblock">
-<div class="content"><!-- Generator: GNU source-highlight 3.1.8
+<div class="content"><!-- Generator: GNU source-highlight
 by Lorenzo Bettini
 http://www.lorenzobettini.it
 http://www.gnu.org/software/src-highlite -->
@@ -778,23 +773,21 @@ python -i rrt<span style="color: #990000">.</span>py</tt></pre></div></div>
 <div class="sect1">
 <h2 id="_before_starting">Before starting</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>All classes and functions are implemented by the remote process <code>hppcorbaserver</code> called a <code>server</code>.
-Instructions in python terminal trigger computation on the server side that stores some objects.
-The server stores a <code>roadmap</code> composed of nodes and of edges. Nodes contain
-configurations. Edges contain paths. The roadmap can be extended using methods</p></div>
+<div class="paragraph"><p>HPP objects can be created and accessed direclty using boost python bindings.
+A roadmap is compsed of nodes and edges. Nodes contain configurations. Edges contain paths. The roadmap can be extended using methods</p></div>
 <div class="ulist"><ul>
 <li>
 <p>
-<code>ps.addConfigToRoadmap</code>,
+<code>roadmap.addNode</code>,
 </p>
 </li>
 <li>
 <p>
-<code>ps.addEdgeToRoadmap</code>.
+<code>roadmap.addEdge</code>.
 </p>
 </li>
 </ul></div>
-<div class="paragraph"><p>Calls to method <code>ps.directPath</code> create a new path between two configurations. This path is stored in a vector on the server side and can be accessed by the
+<div class="paragraph"><p>Calls to method <code>problem.steeringMethod.steer</code> create a new path between two configurations. This path is stored in a vector and can be accessed by the
 index in the vector.</p></div>
 <div class="paragraph"><p>See Section "Some useful methods" below.</p></div>
 <div class="sect2">
@@ -802,11 +795,11 @@ index in the vector.</p></div>
 <div class="paragraph"><p>While running, your RRT algorithm will produce configurations and paths to store in the roadmap
 edges. To display a configuration <code>q</code>, first create a client to <code>gepetto-gui</code> in the python terminal:</p></div>
 <div class="listingblock">
-<div class="content"><!-- Generator: GNU source-highlight 3.1.8
+<div class="content"><!-- Generator: GNU source-highlight
 by Lorenzo Bettini
 http://www.lorenzobettini.it
 http://www.gnu.org/software/src-highlite -->
-<pre><tt><span style="color: #990000">&gt;&gt;&gt;</span> v <span style="color: #990000">=</span> vf<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">createViewer</span></span> <span style="color: #990000">()</span></tt></pre></div></div>
+<pre><tt><span style="color: #990000">&gt;&gt;&gt;</span> v <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #000000">Viewer</span></span><span style="color: #990000">(</span>robot<span style="color: #990000">)</span></tt></pre></div></div>
 <div class="imageblock">
 <div class="content">
 <img src="hpp-gui-ur5.png" alt="hpp-gui graphical interface" width="40%" />
@@ -815,110 +808,108 @@ http://www.gnu.org/software/src-highlite -->
 <div class="paragraph"><p>You should see the above window displaying a manipulator robot surrounded by obstacles.</p></div>
 <div class="paragraph"><p>Then, typing in the python terminal</p></div>
 <div class="listingblock">
-<div class="content"><!-- Generator: GNU source-highlight 3.1.8
+<div class="content"><!-- Generator: GNU source-highlight
 by Lorenzo Bettini
 http://www.lorenzobettini.it
 http://www.gnu.org/software/src-highlite -->
-<pre><tt><span style="color: #990000">&gt;&gt;&gt;</span> <span style="font-weight: bold"><span style="color: #000000">v</span></span> <span style="color: #990000">(</span>q<span style="color: #990000">)</span></tt></pre></div></div>
-<div class="paragraph"><p>You shoud see the robot in configuration <code>q</code>.</p></div>
+<pre><tt><span style="color: #990000">&gt;&gt;&gt;</span> <span style="font-weight: bold"><span style="color: #000000">v</span></span> <span style="color: #990000">(</span>q1<span style="color: #990000">)</span></tt></pre></div></div>
+<div class="paragraph"><p>You shoud see the robot in configuration <code>q1</code>.</p></div>
 </div>
 <div class="sect2">
 <h3 id="_displaying_a_path">Displaying a path</h3>
-<div class="paragraph"><p>Functions that create a path (such as <code>directPath</code> below) append
-the created path to a vector. The path can be displayed by the path
-player <code>pp</code>. To display the result of your algorithm, type</p></div>
+<div class="paragraph"><p>Functions that create a path (such as <code>steer</code> below) append
+the created path to a vector. The path can be displayed by using <code>playPath</code>. To display the result of your algorithm, type</p></div>
 <div class="listingblock">
-<div class="content"><!-- Generator: GNU source-highlight 3.1.8
+<div class="content"><!-- Generator: GNU source-highlight
 by Lorenzo Bettini
 http://www.lorenzobettini.it
 http://www.gnu.org/software/src-highlite -->
-<pre><tt><span style="color: #990000">&gt;&gt;&gt;</span> pid <span style="color: #990000">=</span> ps<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">numberPaths</span></span> <span style="color: #990000">()</span> <span style="color: #990000">-</span> <span style="color: #993399">1</span>
-<span style="color: #990000">&gt;&gt;&gt;</span> <span style="font-weight: bold"><span style="color: #0000FF">if</span></span> pid <span style="color: #990000">&lt;</span> <span style="color: #993399">0</span><span style="color: #990000">:</span> <span style="font-weight: bold"><span style="color: #0000FF">raise</span></span> <span style="font-weight: bold"><span style="color: #000000">RuntimeError</span></span> <span style="color: #990000">(</span><span style="color: #FF0000">"No path in vector"</span><span style="color: #990000">)</span>
-<span style="color: #990000">&gt;&gt;&gt;</span> pp <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #000000">PathPlayer</span></span> <span style="color: #990000">(</span>v<span style="color: #990000">)</span>
-<span style="color: #990000">&gt;&gt;&gt;</span> <span style="font-weight: bold"><span style="color: #000000">pp</span></span> <span style="color: #990000">(</span>pid<span style="color: #990000">)</span></tt></pre></div></div>
+<pre><tt><span style="color: #990000">&gt;&gt;&gt;</span> v<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">playPath</span></span><span style="color: #990000">(</span>path<span style="color: #990000">)</span></tt></pre></div></div>
 <div class="paragraph"><p>You can also use <code>gepetto-gui</code> path player to display a path. For that, in menu <code>Tools</code>, select <code>Reset connections</code> then <code>Refresh</code>. In menu <code>Windows</code>, select <code>Path player</code>.</p></div>
 </div>
 <div class="sect2">
 <h3 id="_hint">Hint</h3>
-<div class="paragraph"><p>You can use methods of objects <code>robot</code> and <code>ps</code>. To get the list of these
-methods with documentation, type in the python terminal</p></div>
-<div class="listingblock">
-<div class="content"><!-- Generator: GNU source-highlight 3.1.8
-by Lorenzo Bettini
-http://www.lorenzobettini.it
-http://www.gnu.org/software/src-highlite -->
-<pre><tt><span style="color: #990000">&gt;&gt;&gt;</span> <span style="font-weight: bold"><span style="color: #000000">help</span></span> <span style="color: #990000">(</span>robot<span style="color: #990000">)</span>
-<span style="color: #990000">&gt;&gt;&gt;</span> <span style="font-weight: bold"><span style="color: #000000">help</span></span> <span style="color: #990000">(</span>ps<span style="color: #990000">)</span></tt></pre></div></div>
+<div class="paragraph"><p>You can use methods of objects <code>robot</code> and <code>problem</code>.</p></div>
 <div class="paragraph"><p>In <code>class MotionPlanner</code>, you can access these object by</p></div>
 <div class="listingblock">
-<div class="content"><!-- Generator: GNU source-highlight 3.1.8
+<div class="content"><!-- Generator: GNU source-highlight
 by Lorenzo Bettini
 http://www.lorenzobettini.it
 http://www.gnu.org/software/src-highlite -->
 <pre><tt><span style="color: #990000">&gt;&gt;&gt;</span>  self<span style="color: #990000">.</span>robot
-<span style="color: #990000">&gt;&gt;&gt;</span>  self<span style="color: #990000">.</span>ps</tt></pre></div></div>
+<span style="color: #990000">&gt;&gt;&gt;</span>  self<span style="color: #990000">.</span>problem</tt></pre></div></div>
 </div>
 <div class="sect2">
 <h3 id="_some_useful_methods">Some useful methods</h3>
 <div class="listingblock">
-<div class="content"><!-- Generator: GNU source-highlight 3.1.8
+<div class="content"><!-- Generator: GNU source-highlight
 by Lorenzo Bettini
 http://www.lorenzobettini.it
 http://www.gnu.org/software/src-highlite -->
 <pre><tt><span style="font-style: italic"><span style="color: #9A1900">#</span></span>
 <span style="font-style: italic"><span style="color: #9A1900"># Note for all the methods below,</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#   - configurations are represented by lists of float,</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#   - "index of the path" means index in the vector of paths stored on the server side,</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#   - "index of the path" means index in the vector of paths,</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#</span></span>
 
 
 <span style="font-style: italic"><span style="color: #9A1900"># Shoot a random configuration within bounds of robot</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#</span></span>
 <span style="font-style: italic"><span style="color: #9A1900"># return: a configuration</span></span>
-robot<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">shootRandomConfig</span></span> <span style="color: #990000">()</span>
+problem<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">configurationShooter</span></span><span style="color: #990000">().</span><span style="font-weight: bold"><span style="color: #000000">shoot</span></span><span style="color: #990000">()</span>
 
 <span style="font-style: italic"><span style="color: #9A1900"># Get nearest node of given input configuration in a connected component of the  current roadmap</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#  config:               the input configuration</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#  connectedComponentId: the index of a connected component in the roadmap,</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#                        if is negative, considers the whole roadmap</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#                        default value: -1</span></span>
 <span style="font-style: italic"><span style="color: #9A1900"># return:                nearest configuration,</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#                        distance between nearest configuration and input configuration</span></span>
-ps<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">getNearestConfig</span></span> <span style="color: #990000">(</span>config<span style="color: #990000">,</span> connectedComponentId<span style="color: #990000">=-</span><span style="color: #993399">1</span><span style="color: #990000">)</span>
+roadmap<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">nearestNode</span></span><span style="color: #990000">(</span>config<span style="color: #990000">,</span> connectedComponentId<span style="color: #990000">)</span>
 
 <span style="font-style: italic"><span style="color: #9A1900"># Build direct path between two configurations</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#  q1, q2:     start and end configurations of the direct path,</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#  q1, q2:     start and end configurations of the direct path</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#  return:     the generated path</span></span>
+problem<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">steeringMethod</span></span><span style="color: #990000">().</span><span style="font-weight: bold"><span style="color: #000000">steer</span></span> <span style="color: #990000">(</span>q1<span style="color: #990000">,</span> q2<span style="color: #990000">)</span>
+
+<span style="font-style: italic"><span style="color: #9A1900"># Validate generated path by steering method</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#  path:     path previously generated,</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#  validation: whether the path should be tested for collision,</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#  return:     whether the path is valid (True if validation is set to False),</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#              index of the path,</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#              the valid part of the path,</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#              a string describing why the path is not valid, or empty string.</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#  note:       When the path between q1 and q2 is not valid, the method returns</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#              a part of the path starting at q1 and ending before collision.</span></span>
-ps<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">directPath</span></span> <span style="color: #990000">(</span>q1<span style="color: #990000">,</span> q2<span style="color: #990000">,</span> validation<span style="color: #990000">)</span>
+problem<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">pathValidation</span></span><span style="color: #990000">().</span><span style="font-weight: bold"><span style="color: #000000">validate</span></span><span style="color: #990000">(</span>path<span style="color: #990000">,</span> validation<span style="color: #990000">)</span>
+
+<span style="font-style: italic"><span style="color: #9A1900"># Combine both functions above</span></span>
+problem<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">directPath</span></span><span style="color: #990000">(</span>q1<span style="color: #990000">,</span> q2<span style="color: #990000">,</span> validation<span style="color: #990000">)</span>
+
 
 <span style="font-style: italic"><span style="color: #9A1900"># Add a configuration to the current roadmap</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#  q: configuration</span></span>
-ps<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">addConfigToRoadmap</span></span> <span style="color: #990000">(</span>q<span style="color: #990000">)</span>
+roadmap<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">addNode</span></span><span style="color: #990000">(</span>q<span style="color: #990000">)</span>
 
 <span style="font-style: italic"><span style="color: #9A1900"># Add an edge to the current roadmap</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#  q1, q2:    configurations stored in the nodes to be linked by the edge,</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#  pathId:    index of the path linking q1 and q2 to be stored in the edge,</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#  path:    the path linking q1 and q2 to be stored in the edge,</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#  bothEdges: whether an edge between q2 and q1 should also be added.</span></span>
-ps<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">addEdgeToRoadmap</span></span> <span style="color: #990000">(</span>q1<span style="color: #990000">,</span> q2<span style="color: #990000">,</span> pathId<span style="color: #990000">,</span> bothEdges<span style="color: #990000">)</span>
+roadmap<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">addEdge</span></span><span style="color: #990000">(</span>q1<span style="color: #990000">,</span> q2<span style="color: #990000">,</span> path<span style="color: #990000">,</span> bothEdges<span style="color: #990000">)</span>
 
 <span style="font-style: italic"><span style="color: #9A1900"># Get length of path</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#  pathId: index of the path</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#  path: the path</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#  return: length of the path. The interval of definition of the path starts at</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#          0 and ends at the path length.</span></span>
-ps<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">pathLength</span></span> <span style="color: #990000">(</span>pathId<span style="color: #990000">)</span>
+path<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">length</span></span> <span style="color: #990000">()</span>
 
 <span style="font-style: italic"><span style="color: #9A1900"># Get configuration along a path</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#</span></span>
@@ -927,12 +918,13 @@ ps<span style="color: #990000">.</span><span style="font-weight: bold"><span sty
 <span style="font-style: italic"><span style="color: #9A1900">#             (see method pathLength)</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#  return: configuration of path at given parameter</span></span>
-ps<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">configAtParam</span></span> <span style="color: #990000">(</span>pathId<span style="color: #990000">,</span> parameter<span style="color: #990000">)</span>
+<span style="font-weight: bold"><span style="color: #000000">path</span></span> <span style="color: #990000">(</span>pathId<span style="color: #990000">,</span> parameter<span style="color: #990000">)</span>
+path<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">eval</span></span><span style="color: #990000">(</span>pathId<span style="color: #990000">,</span> parameter<span style="color: #990000">)</span>
 
 <span style="font-style: italic"><span style="color: #9A1900"># Get the number of connected components of the current roadmap</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#  return: number of connected components</span></span>
-ps<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">numberConnectedComponents</span></span> <span style="color: #990000">()</span></tt></pre></div></div>
+roadmap<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">numberConnectedComponents</span></span><span style="color: #990000">()</span></tt></pre></div></div>
 <div class="paragraph"><p>Before starting we recommend that you play a little with the above methods,
 creating and displaying some configurations and paths in the <code>python</code> terminal.</p></div>
 </div>
@@ -943,14 +935,14 @@ creating and displaying some configurations and paths in the <code>python</code>
 <div class="sectionbody">
 <div class="paragraph"><p>In file <code>script/motion_planner.py</code>, remove instruction</p></div>
 <div class="listingblock">
-<div class="content"><!-- Generator: GNU source-highlight 3.1.8
+<div class="content"><!-- Generator: GNU source-highlight
 by Lorenzo Bettini
 http://www.lorenzobettini.it
 http://www.gnu.org/software/src-highlite -->
 <pre><tt>    <span style="font-weight: bold"><span style="color: #0000FF">print</span></span> <span style="color: #990000">(</span><span style="color: #FF0000">"Method solveBiRRT is not implemented yet"</span><span style="color: #990000">)</span></tt></pre></div></div>
 <div class="paragraph"><p>and implement RRT algorithm between markers</p></div>
 <div class="listingblock">
-<div class="content"><!-- Generator: GNU source-highlight 3.1.8
+<div class="content"><!-- Generator: GNU source-highlight
 by Lorenzo Bettini
 http://www.lorenzobettini.it
 http://www.gnu.org/software/src-highlite -->
@@ -964,7 +956,7 @@ http://www.gnu.org/software/src-highlite -->
 <div id="footer">
 <div id="footer-text">
 Last updated
- 2019-05-31 14:35:55 CEST
+ 2025-11-27 10:50:07 UTC
 </div>
 </div>
 </body>

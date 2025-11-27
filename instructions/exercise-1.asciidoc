@@ -7,40 +7,33 @@ Program RRT algorithm in python.
 
 Introduction
 ------------
-Open a terminal cd into hpp-practicals directory and open 3 tab by typing CTRL+SHIFT+T twice.
+Open a terminal cd into hpp-practicals directory and open 2 tab by typing CTRL+SHIFT+T.
 In the first terminal, type
 [source,sh]
 ----
-hppcorbaserver
+gepetto-gui -c basic
+
 ----
 
 In the second terminal, type
-[source,sh]
-----
-gepetto-gui -c basic
-----
-
-In the third terminal, type
 [source,sh]
 ----
 cd script
 python -i rrt.py
 ----
 
+
 You should see the message "Method solveBiRRT is not implemented yet". Open file +script/motion_planner.py+ in a text editor. The message is produced by method +solveBiRRT+ of class +MotionPlanner+.
 
 Before starting
 ---------------
+HPP objects can be created and accessed direclty using boost python bindings.
+A roadmap is compsed of nodes and edges. Nodes contain configurations. Edges contain paths. The roadmap can be extended using methods
 
-All classes and functions are implemented by the remote process +hppcorbaserver+ called a +server+.
-Instructions in python terminal trigger computation on the server side that stores some objects.
-The server stores a +roadmap+ composed of nodes and of edges. Nodes contain
-configurations. Edges contain paths. The roadmap can be extended using methods
+* +roadmap.addNode+,
+* +roadmap.addEdge+.
 
-* +ps.addConfigToRoadmap+,
-* +ps.addEdgeToRoadmap+.
-
-Calls to method +ps.directPath+ create a new path between two configurations. This path is stored in a vector on the server side and can be accessed by the
+Calls to method +problem.steeringMethod.steer+ create a new path between two configurations. This path is stored in a vector and can be accessed by the
 index in the vector.
 
 See Section "Some useful methods" below.
@@ -52,7 +45,7 @@ While running, your RRT algorithm will produce configurations and paths to store
 edges. To display a configuration +q+, first create a client to +gepetto-gui+ in the python terminal:
 [source,python]
 ----
->>> v = vf.createViewer ()
+>>> v = Viewer(robot)
 ----
 
 image::hpp-gui-ur5.png[width="40%",alt="hpp-gui graphical interface"]
@@ -69,16 +62,12 @@ You shoud see the robot in configuration +q1+.
 Displaying a path
 ~~~~~~~~~~~~~~~~~
 
-Functions that create a path (such as +directPath+ below) append
-the created path to a vector. The path can be displayed by the path
-player +pp+. To display the result of your algorithm, type
+Functions that create a path (such as +steer+ below) append
+the created path to a vector. The path can be displayed by using +playPath+. To display the result of your algorithm, type
 
 [source,python]
 ----
->>> pid = ps.numberPaths () - 1
->>> if pid < 0: raise RuntimeError ("No path in vector")
->>> pp = PathPlayer (v)
->>> pp (pid)
+>>> v.playPath(path)
 ----
 
 You can also use +gepetto-gui+ path player to display a path. For that, in menu +Tools+, select +Reset connections+ then +Refresh+. In menu +Windows+, select +Path player+.
@@ -86,21 +75,14 @@ You can also use +gepetto-gui+ path player to display a path. For that, in menu 
 Hint
 ~~~~
 
-You can use methods of objects +robot+ and +ps+. To get the list of these
-methods with documentation, type in the python terminal
-
-[source,python]
-----
->>> help (robot)
->>> help (ps)
-----
+You can use methods of objects +robot+ and +problem+.
 
 In +class MotionPlanner+, you can access these object by
 
 [source,python]
 ----
 >>>  self.robot
->>>  self.ps
+>>>  self.problem
 ----
 
 Some useful methods
@@ -110,57 +92,67 @@ Some useful methods
 #
 # Note for all the methods below,
 #   - configurations are represented by lists of float,
-#   - "index of the path" means index in the vector of paths stored on the server side,
+#   - "index of the path" means index in the vector of paths,
 #
 
 
 # Shoot a random configuration within bounds of robot
 #
 # return: a configuration
-robot.shootRandomConfig ()
+problem.configurationShooter().shoot()
 
 # Get nearest node of given input configuration in a connected component of the  current roadmap
 #
 #  config:               the input configuration
 #  connectedComponentId: the index of a connected component in the roadmap,
 #                        if is negative, considers the whole roadmap
-#                        default value: -1
 # return:                nearest configuration,
 #                        distance between nearest configuration and input configuration
-ps.getNearestConfig (config, connectedComponentId=-1)
+roadmap.nearestNode(config, connectedComponentId)
 
 # Build direct path between two configurations
 #
-#  q1, q2:     start and end configurations of the direct path,
+#  q1, q2:     start and end configurations of the direct path
+#
+#  return:     the generated path
+problem.steeringMethod().steer (q1, q2)
+
+# Validate generated path by steering method
+#
+#  path:     path previously generated,
 #  validation: whether the path should be tested for collision,
 #
 #  return:     whether the path is valid (True if validation is set to False),
-#              index of the path,
+#              the valid part of the path,
 #              a string describing why the path is not valid, or empty string.
 #
 #  note:       When the path between q1 and q2 is not valid, the method returns
 #              a part of the path starting at q1 and ending before collision.
-ps.directPath (q1, q2, validation)
+problem.pathValidation().validate(path, validation)
+
+# Combine both functions above
+problem.directPath(q1, q2, validation)
+
 
 # Add a configuration to the current roadmap
 #
 #  q: configuration
-ps.addConfigToRoadmap (q)
+roadmap.addNode(q)
 
 # Add an edge to the current roadmap
 #
 #  q1, q2:    configurations stored in the nodes to be linked by the edge,
-#  pathId:    index of the path linking q1 and q2 to be stored in the edge,
+#  path:    the path linking q1 and q2 to be stored in the edge,
 #  bothEdges: whether an edge between q2 and q1 should also be added.
-ps.addEdgeToRoadmap (q1, q2, pathId, bothEdges)
+roadmap.addEdge(q1, q2, path, bothEdges)
 
 # Get length of path
 #
-#  pathId: index of the path
+#  path: the path
 #
 #  return: length of the path. The interval of definition of the path starts at
 #          0 and ends at the path length.
-ps.pathLength (pathId)
+path.length ()
 
 # Get configuration along a path
 #
@@ -169,12 +161,13 @@ ps.pathLength (pathId)
 #             (see method pathLength)
 #
 #  return: configuration of path at given parameter
-ps.configAtParam (pathId, parameter)
+path (pathId, parameter)
+path.eval(pathId, parameter)
 
 # Get the number of connected components of the current roadmap
 #
 #  return: number of connected components
-ps.numberConnectedComponents ()
+roadmap.numberConnectedComponents()
 ----
 
 Before starting we recommend that you play a little with the above methods,

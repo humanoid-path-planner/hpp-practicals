@@ -8,11 +8,10 @@ Define a constraint graph and plan a manipulation path.
 
 Introduction
 ------------
-Open a terminal, cd into hpp-practicals directory and open 3 tab by typing CTRL+SHIFT+T
-twice. In the first terminal, type
+Open a terminal, cd into hpp-practicals directory and open 2 tab by typing CTRL+SHIFT+T. In the first terminal, type
 [source,sh]
 ----
-hppcorbaserver
+gepetto-gui
 ----
 
 In the second terminal, type
@@ -22,16 +21,10 @@ cd script
 python -i grasp_ball.py
 ----
 
-In the third terminal, type
-[source,sh]
-----
-gepetto-gui
-----
-
 To display the robot and environment, create again a client to +gepetto-gui+ in the python terminal:
 [source,python]
 ----
->>> v = vf.createViewer ()
+>>> v = Viewer()
 ----
 
 image::manipulation.png[width="40%",alt="hpp-gui graphical interface"]
@@ -49,26 +42,14 @@ the script by typing respectively
 Displaying the constraint graph
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In +gepetto-gui+ menu +Windows+, select item +Constraint Graph+. The following window should appear in +gepetto-gui+.
-
-image::hpp-plot-manipulation-graph.png[width="40%",alt="hpp-plot-manipulation-graph"]
-
-Click on buttons "Refresh" and "Statistics" to display the current constraint graph.
-
-By clicking on edges, you can see some statistics about the roadmap extension.
-
-image::hpp-plot-manipulation-graph-statistics.png[width="40%",alt="hpp-plot-manipulation-graph"]
-
-Alternatively, in the python terminal. You can display the constraint graph by typing
+In the python terminal, you can print the constraint graph by typing:
 
 [source,python]
 ----
->>> graph.display (format='svg')
+>>> graph.display ('./out.dot')
 ----
 
-The graph should be displayed in a browser. By moving the mouse on
-nodes and edges, you can see the constraints associated to each graph
-element.
+You can now go to https://dreampuf.github.io/GraphvizOnline or any other tool to display the content of the dot file.
 
 Solving the problem
 ~~~~~~~~~~~~~~~~~~~
@@ -76,7 +57,7 @@ Solving the problem
 Typing
 [source,python]
 ----
->>> ps.solve ()
+>>> manipulationPlanner.solve ()
 ----
 should solve the problem in a minute or so.
 
@@ -85,8 +66,8 @@ Displaying the path
 As in exercise 1, the path can be displayed using the path player
 [source,python]
 ----
->>> pp = PathPlayer (v)
->>> pp (0)
+>>> p = manipulationPlanner.solve ()
+>>> v.playPath(p)
 ----
 You can also display the path using the path player in +gepetto-gui+.
 
@@ -96,7 +77,7 @@ A more difficult problem
 script +grasp_ball_in_box.py+ defines the same problem as
 +grasp_ball.py+, except that in the initial configuration, the ball
 is in a box. The resolution takes a lot more time since RRT algorithm
-needs to generate a lot of nodes before the gripper reaches the
+needs to generate a lot of states before the gripper reaches the
 ball in the box.
 
 Exercise 2
@@ -116,7 +97,7 @@ The graph below provides an example.
 
 image::constraintgraph.png[width="40%",alt="Constraint graph"]
 
-WARNING: In method +graph.createNode+ the order of the nodes in the list given as input is important: when checking in which node a configuration lies, node constraints will be checked in the order of node creation.
+WARNING: When adding states to the graph  (+graph.createState+) the order of the additions is important: when checking in which state a configuration lies, state constraints will be checked in the order of state creation.
 
 Exercise 2.2
 ~~~~~~~~~~~~
@@ -129,95 +110,107 @@ indices named +paths+ corresponding to indices in the vector of paths. Each path
 
 Hints
 -----
-To test a node named `nodeName`, you can use the following loop:
+To test a state named `state`, you can use the following loop:
 [source,python]
 ----
 for i in range(100):
-  q = robot.shootRandomConfig()
-  res, q1, err = graph.applyNodeConstraints (nodeName, q)
+  q = problem.configurationShooter().shoot()
+  res, q1, err = graph.applyStateConstraints (state, q)
   if res: break
 ----
 If `i==99 and res == False`, the constraint is probably malformed. Otherwise
-configuration `q1` is in node `nodeName`.
+configuration `q1` is in the state.
 
-To test an edge name `edgeName`, you can use the following loop:
+To test a transition `transition`, you can use the following loop:
 [source,python]
 ----
 for i in range(100):
-  q = robot.shootRandomConfig()
-  res, q2, err = graph.generateTargetConfig (edgeName, q1, q)
+  q = problem.configurationShooter().shoot()
+  res, q2, err = graph.generateTargetConfig (transition, q1, q)
   if res: break
 ----
-where `q1` is a configuration in the starting node of `edgeName`.
+where `q1` is a configuration in the starting state of `transition`.
 If `i==99 and res == False`, the constraint is probably malformed. Otherwise,
-configuration `q2` is in the destination node of `edgeName` and accessible from
-q1 following this edge.
+configuration `q2` is in the destination state of `transition` and accessible from
+q1 following this transition.
 
 Some useful methods
 ~~~~~~~~~~~~~~~~~~~
 [source,python]
 ----
-# create a relative transformation constraint between two joints
-#
-#  name   :            name of the constraint,
-#  joint1 :            name of the first joint,
-#  joint2 :            name of the second joint,
-#  relativeTransform : relative transformation of joint2 frame in joint1 frame,
-#  mask :              list of 6 Boolean to select active coordinates of the constraint.
-#  note if joint1 == "", joint1 is the world frame.
-ps.createTransformationConstraint (name, joint1, joint2, relativeTransform, mask)
 
-# Set whether right hand side of constraint is constant
+# Get a joint Id from its name
 #
-#  name :     name of the constraint,
-#  constant : Boolean value.
-ps.setConstantRightHandSide (name, constant)
+# name : name of the joint
+#  return:
+#    Id of the joint (Id)
+robot.model().getJointId(name)
 
-# Create nodes of the constraint graph
+# create a relative transformation between two joints
 #
-#  nodeList: list of names of the nodes to be created.
+#  name :     name of the function,
+#  robot :    pinocchio device,
+#  joint1 :    Id of the first joint,
+#  joint2 :    Id of the second joint,
+#  relativeTransform :    relative transformation of joint2 frame in joint1 frame,
+#  mask :    list of 6 Boolean to select active coordinates of the constraint.
+#  return : function that can be used to create constraints
+pc = Transformation(name, robot, joint2, joint1, relativeTransform, mask)
+
+# create an implicit constraint
+# f : function describing the constraint,
+# cts: ComparisonTypes mask
+# mask : mask
+constraint = Implicit(f, cts, mask)
+
+# Create states of the constraint graph
 #
-#  note:     Nodes are ordered according to the list passed to this method. When
-#            determining to which node a configuration belongs, constraints of
-#            the nodes are tested in the creation order. As a consequence, it
-#            is important that if the subspace defined by "node1" is a subset of
-#            the subspace defined by "node2", "node1" is placed before "node2"
+#  stateName: name of the state to be created.
+#  waypoint: if the state is a waypoint.
+#  priority: affects how the states are ordered.
+#
+#  note:     States are ordered according to the list passed to this method. When
+#            determining to which state a configuration belongs, constraints of
+#            the states are tested in the creation order. As a consequence, it
+#            is important that if the subspace defined by "state1" is a subset of
+#            the subspace defined by "state2", "state1" is placed before "state2"
 #            in the input list.
-graph.createNode (nodeList)
+graph.createState (stateName, waypoint, priority)
 
-# Create an edge of the constraint graph
+# Create an transition of the constraint graph
 #
-#  node1:     name of the node the edge starts from,
-#  node2:     name of the node the edge reaches,
-#  edgeName:  name of the edge,
-#  belongsTo: name of the node in the subspace defined by which paths of the edge lie.
-graph.createEdge (node1, node2, edgeName, weight, belongsTo)
+#  state1:     state the transition starts from,
+#  state2:     state the transition reaches,
+#  transitionName:  name of the transition,
+#  belongsTo: state in the subspace defined by which paths of the transition lie.
+graph.createTransition (state1, state2, transitionName, weight, belongsTo)
 
-# Set constraint relative to nodes and edges
+# Set constraint relative to state
 #
-#  nodeName :   name of the node
-#  edgeName :   name of the edge
-#  c1, c2   :  names of constraints to be passed to the node or edge
-#
-#  note:        one and only one argument between node and edge should be
-#              provided.
-graph.addConstraints (node = nodeName, edge = edgeName, constraints = \
-                      Constraints (numConstraints = ['c1', 'c2']))
+#  stateName :   name of the state
+#  cs   : list of constraints to be passed to the state
+graph.addNumericalConstraintsToState (state, cs)
 
-# Project a configuration on the supspace defined by a node
+# Set constraint relative to transition
 #
-#  nodeName: name of the node,
+#  transitionName :   name of the transition
+#  cs   : list of constraints to be passed to the transition
+graph.addNumericalConstraintsToTransition (transition, cs)
+
+# Project a configuration on the supspace defined by a state
+#
+#  stat:  state,
 #  q:        input configuration.
 #
 #  return:
 #    whether projection succeeded (Boolean),
 #    projected configuration,
 #    numerical error
-graph.applyNodeConstraints (nodeName, q)
+graph.applyStateConstraints (state, q)
 
-# Project a configuration on a leaf of the foliation defined by an edge
+# Project a configuration on a leaf of the foliation defined by an transition
 #
-#  edgeName: name of the edge,
+#  transition: transition,
 #  q1:       configuration defining the leaf (right hand side of constraint),
 #  q2:       configuration to project on the leaf.
 #
@@ -225,6 +218,6 @@ graph.applyNodeConstraints (nodeName, q)
 #    whether projection succeeded (Boolean),
 #    projected configuration,
 #    numerical error
-graph.generateTargetConfig (edgeName, q1, q2)
+graph.generateTargetConfig (Name, q1, q2)
 
 ----

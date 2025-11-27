@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
-<meta name="generator" content="AsciiDoc 9.0.0rc1" />
+<meta name="generator" content="AsciiDoc 10.2.0" />
 <title>Manipulation planning</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
@@ -728,13 +728,17 @@ install: function(toclevels) {
 }
 
 }
-asciidoc.install();
+asciidoc.install(2);
 /*]]>*/
 </script>
 </head>
 <body class="article">
 <div id="header">
 <h1>Manipulation planning</h1>
+<div id="toc">
+  <div id="toctitle">Table of Contents</div>
+  <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
+</div>
 </div>
 <div id="content">
 <div class="sect1">
@@ -746,14 +750,13 @@ asciidoc.install();
 <div class="sect1">
 <h2 id="_introduction">Introduction</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>Open a terminal, cd into hpp-practicals directory and open 3 tab by typing CTRL+SHIFT+T
-twice. In the first terminal, type</p></div>
+<div class="paragraph"><p>Open a terminal, cd into hpp-practicals directory and open 2 tab by typing CTRL+SHIFT+T. In the first terminal, type</p></div>
 <div class="listingblock">
 <div class="content"><!-- Generator: GNU source-highlight
 by Lorenzo Bettini
 http://www.lorenzobettini.it
 http://www.gnu.org/software/src-highlite -->
-<pre><tt>hppcorbaserver</tt></pre></div></div>
+<pre><tt>gepetto-gui</tt></pre></div></div>
 <div class="paragraph"><p>In the second terminal, type</p></div>
 <div class="listingblock">
 <div class="content"><!-- Generator: GNU source-highlight
@@ -762,20 +765,13 @@ http://www.lorenzobettini.it
 http://www.gnu.org/software/src-highlite -->
 <pre><tt>cd script
 python -i grasp_ball<span style="color: #990000">.</span>py</tt></pre></div></div>
-<div class="paragraph"><p>In the third terminal, type</p></div>
-<div class="listingblock">
-<div class="content"><!-- Generator: GNU source-highlight
-by Lorenzo Bettini
-http://www.lorenzobettini.it
-http://www.gnu.org/software/src-highlite -->
-<pre><tt>gepetto-gui</tt></pre></div></div>
 <div class="paragraph"><p>To display the robot and environment, create again a client to <code>gepetto-gui</code> in the python terminal:</p></div>
 <div class="listingblock">
 <div class="content"><!-- Generator: GNU source-highlight
 by Lorenzo Bettini
 http://www.lorenzobettini.it
 http://www.gnu.org/software/src-highlite -->
-<pre><tt><span style="color: #990000">&gt;&gt;&gt;</span> v <span style="color: #990000">=</span> vf<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">createViewer</span></span> <span style="color: #990000">()</span></tt></pre></div></div>
+<pre><tt><span style="color: #990000">&gt;&gt;&gt;</span> v <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #000000">Viewer</span></span><span style="color: #990000">()</span></tt></pre></div></div>
 <div class="imageblock">
 <div class="content">
 <img src="manipulation.png" alt="hpp-gui graphical interface" width="40%" />
@@ -793,29 +789,14 @@ http://www.gnu.org/software/src-highlite -->
 <span style="color: #990000">&gt;&gt;&gt;</span> <span style="font-weight: bold"><span style="color: #000000">v</span></span> <span style="color: #990000">(</span>q_goal<span style="color: #990000">)</span></tt></pre></div></div>
 <div class="sect2">
 <h3 id="_displaying_the_constraint_graph">Displaying the constraint graph</h3>
-<div class="paragraph"><p>In <code>gepetto-gui</code> menu <code>Windows</code>, select item <code>Constraint Graph</code>. The following window should appear in <code>gepetto-gui</code>.</p></div>
-<div class="imageblock">
-<div class="content">
-<img src="hpp-plot-manipulation-graph.png" alt="hpp-plot-manipulation-graph" width="40%" />
-</div>
-</div>
-<div class="paragraph"><p>Click on buttons "Refresh" and "Statistics" to display the current constraint graph.</p></div>
-<div class="paragraph"><p>By clicking on edges, you can see some statistics about the roadmap extension.</p></div>
-<div class="imageblock">
-<div class="content">
-<img src="hpp-plot-manipulation-graph-statistics.png" alt="hpp-plot-manipulation-graph" width="40%" />
-</div>
-</div>
-<div class="paragraph"><p>Alternatively, in the python terminal. You can display the constraint graph by typing</p></div>
+<div class="paragraph"><p>In the python terminal, you can print the constraint graph by typing:</p></div>
 <div class="listingblock">
 <div class="content"><!-- Generator: GNU source-highlight
 by Lorenzo Bettini
 http://www.lorenzobettini.it
 http://www.gnu.org/software/src-highlite -->
-<pre><tt><span style="color: #990000">&gt;&gt;&gt;</span> graph<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">display</span></span> <span style="color: #990000">(</span>format<span style="color: #990000">=</span><span style="color: #FF0000">'svg'</span><span style="color: #990000">)</span></tt></pre></div></div>
-<div class="paragraph"><p>The graph should be displayed in a browser. By moving the mouse on
-nodes and edges, you can see the constraints associated to each graph
-element.</p></div>
+<pre><tt><span style="color: #990000">&gt;&gt;&gt;</span> graph<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">display</span></span> <span style="color: #990000">(</span><span style="color: #FF0000">'./out.dot'</span><span style="color: #990000">)</span></tt></pre></div></div>
+<div class="paragraph"><p>You can now go to <a href="https://dreampuf.github.io/GraphvizOnline">https://dreampuf.github.io/GraphvizOnline</a> or any other tool to display the content of the dot file.</p></div>
 </div>
 <div class="sect2">
 <h3 id="_solving_the_problem">Solving the problem</h3>
@@ -825,7 +806,7 @@ element.</p></div>
 by Lorenzo Bettini
 http://www.lorenzobettini.it
 http://www.gnu.org/software/src-highlite -->
-<pre><tt><span style="color: #990000">&gt;&gt;&gt;</span> ps<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">solve</span></span> <span style="color: #990000">()</span></tt></pre></div></div>
+<pre><tt><span style="color: #990000">&gt;&gt;&gt;</span> manipulationPlanner<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">solve</span></span> <span style="color: #990000">()</span></tt></pre></div></div>
 <div class="paragraph"><p>should solve the problem in a minute or so.</p></div>
 </div>
 <div class="sect2">
@@ -836,8 +817,8 @@ http://www.gnu.org/software/src-highlite -->
 by Lorenzo Bettini
 http://www.lorenzobettini.it
 http://www.gnu.org/software/src-highlite -->
-<pre><tt><span style="color: #990000">&gt;&gt;&gt;</span> pp <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #000000">PathPlayer</span></span> <span style="color: #990000">(</span>v<span style="color: #990000">)</span>
-<span style="color: #990000">&gt;&gt;&gt;</span> <span style="font-weight: bold"><span style="color: #000000">pp</span></span> <span style="color: #990000">(</span><span style="color: #993399">0</span><span style="color: #990000">)</span></tt></pre></div></div>
+<pre><tt><span style="color: #990000">&gt;&gt;&gt;</span> p <span style="color: #990000">=</span> manipulationPlanner<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">solve</span></span> <span style="color: #990000">()</span>
+<span style="color: #990000">&gt;&gt;&gt;</span> v<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">playPath</span></span><span style="color: #990000">(</span>p<span style="color: #990000">)</span></tt></pre></div></div>
 <div class="paragraph"><p>You can also display the path using the path player in <code>gepetto-gui</code>.</p></div>
 </div>
 </div>
@@ -848,8 +829,8 @@ http://www.gnu.org/software/src-highlite -->
 <div class="paragraph"><p>script <code>grasp_ball_in_box.py</code> defines the same problem as
 <code>grasp_ball.py</code>, except that in the initial configuration, the ball
 is in a box. The resolution takes a lot more time since RRT algorithm
-needs to generate a lot of nodes before the gripper reaches the
-initial configuration of the box.</p></div>
+needs to generate a lot of states before the gripper reaches the
+ball in the box.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -881,9 +862,9 @@ a state where the gripper holds the ball above the ground.
 <div class="admonitionblock">
 <table><tr>
 <td class="icon">
-<div class="title">Warning</div>
+<img src="./images/icons/warning.png" alt="Warning" />
 </td>
-<td class="content">In method <code>graph.createNode</code> the order of the nodes in the list given as input is important: when checking in which node a configuration lies, node constraints will be checked in the order of node creation.</td>
+<td class="content">When adding states to the graph  (<code>graph.createState</code>) the order of the additions is important: when checking in which state a configuration lies, state constraints will be checked in the order of state creation.</td>
 </tr></table>
 </div>
 </div>
@@ -899,32 +880,32 @@ indices named <code>paths</code> corresponding to indices in the vector of paths
 <div class="sect1">
 <h2 id="_hints">Hints</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>To test a node named <code>nodeName</code>, you can use the following loop:</p></div>
+<div class="paragraph"><p>To test a state named <code>state</code>, you can use the following loop:</p></div>
 <div class="listingblock">
 <div class="content"><!-- Generator: GNU source-highlight
 by Lorenzo Bettini
 http://www.lorenzobettini.it
 http://www.gnu.org/software/src-highlite -->
 <pre><tt><span style="font-weight: bold"><span style="color: #0000FF">for</span></span> i <span style="font-weight: bold"><span style="color: #0000FF">in</span></span> <span style="font-weight: bold"><span style="color: #000000">range</span></span><span style="color: #990000">(</span><span style="color: #993399">100</span><span style="color: #990000">):</span>
-  q <span style="color: #990000">=</span> robot<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">shootRandomConfig</span></span><span style="color: #990000">()</span>
-  res<span style="color: #990000">,</span> q1<span style="color: #990000">,</span> err <span style="color: #990000">=</span> graph<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">applyNodeConstraints</span></span> <span style="color: #990000">(</span>nodeName<span style="color: #990000">,</span> q<span style="color: #990000">)</span>
+  q <span style="color: #990000">=</span> problem<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">configurationShooter</span></span><span style="color: #990000">().</span><span style="font-weight: bold"><span style="color: #000000">shoot</span></span><span style="color: #990000">()</span>
+  res<span style="color: #990000">,</span> q1<span style="color: #990000">,</span> err <span style="color: #990000">=</span> graph<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">applyStateConstraints</span></span> <span style="color: #990000">(</span>state<span style="color: #990000">,</span> q<span style="color: #990000">)</span>
   <span style="font-weight: bold"><span style="color: #0000FF">if</span></span> res<span style="color: #990000">:</span> <span style="font-weight: bold"><span style="color: #0000FF">break</span></span></tt></pre></div></div>
 <div class="paragraph"><p>If <code>i==99 and res == False</code>, the constraint is probably malformed. Otherwise
-configuration <code>q1</code> is in node <code>nodeName</code>.</p></div>
-<div class="paragraph"><p>To test an edge name <code>edgeName</code>, you can use the following loop:</p></div>
+configuration <code>q1</code> is in the state.</p></div>
+<div class="paragraph"><p>To test a transition <code>transition</code>, you can use the following loop:</p></div>
 <div class="listingblock">
 <div class="content"><!-- Generator: GNU source-highlight
 by Lorenzo Bettini
 http://www.lorenzobettini.it
 http://www.gnu.org/software/src-highlite -->
 <pre><tt><span style="font-weight: bold"><span style="color: #0000FF">for</span></span> i <span style="font-weight: bold"><span style="color: #0000FF">in</span></span> <span style="font-weight: bold"><span style="color: #000000">range</span></span><span style="color: #990000">(</span><span style="color: #993399">100</span><span style="color: #990000">):</span>
-  q <span style="color: #990000">=</span> robot<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">shootRandomConfig</span></span><span style="color: #990000">()</span>
-  res<span style="color: #990000">,</span> q2<span style="color: #990000">,</span> err <span style="color: #990000">=</span> graph<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">generateTargetConfig</span></span> <span style="color: #990000">(</span>edgeName<span style="color: #990000">,</span> q1<span style="color: #990000">,</span> q<span style="color: #990000">)</span>
+  q <span style="color: #990000">=</span> problem<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">configurationShooter</span></span><span style="color: #990000">().</span><span style="font-weight: bold"><span style="color: #000000">shoot</span></span><span style="color: #990000">()</span>
+  res<span style="color: #990000">,</span> q2<span style="color: #990000">,</span> err <span style="color: #990000">=</span> graph<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">generateTargetConfig</span></span> <span style="color: #990000">(</span>transition<span style="color: #990000">,</span> q1<span style="color: #990000">,</span> q<span style="color: #990000">)</span>
   <span style="font-weight: bold"><span style="color: #0000FF">if</span></span> res<span style="color: #990000">:</span> <span style="font-weight: bold"><span style="color: #0000FF">break</span></span></tt></pre></div></div>
-<div class="paragraph"><p>where <code>q1</code> is a configuration in the starting node of <code>edgeName</code>.
+<div class="paragraph"><p>where <code>q1</code> is a configuration in the starting state of <code>transition</code>.
 If <code>i==99 and res == False</code>, the constraint is probably malformed. Otherwise,
-configuration <code>q2</code> is in the destination node of <code>edgeName</code> and accessible from
-q1 following this edge.</p></div>
+configuration <code>q2</code> is in the destination state of <code>transition</code> and accessible from
+q1 following this transition.</p></div>
 <div class="sect2">
 <h3 id="_some_useful_methods">Some useful methods</h3>
 <div class="listingblock">
@@ -932,67 +913,79 @@ q1 following this edge.</p></div>
 by Lorenzo Bettini
 http://www.lorenzobettini.it
 http://www.gnu.org/software/src-highlite -->
-<pre><tt><span style="font-style: italic"><span style="color: #9A1900"># create a relative transformation constraint between two joints</span></span>
+<pre><tt>
+<span style="font-style: italic"><span style="color: #9A1900"># Get a joint Id from its name</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#  name   :            name of the constraint,</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#  joint1 :            name of the first joint,</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#  joint2 :            name of the second joint,</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#  relativeTransform : relative transformation of joint2 frame in joint1 frame,</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#  mask :              list of 6 Boolean to select active coordinates of the constraint.</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#  note if joint1 == "", joint1 is the world frame.</span></span>
-ps<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">createTransformationConstraint</span></span> <span style="color: #990000">(</span>name<span style="color: #990000">,</span> joint1<span style="color: #990000">,</span> joint2<span style="color: #990000">,</span> relativeTransform<span style="color: #990000">,</span> mask<span style="color: #990000">)</span>
+<span style="font-style: italic"><span style="color: #9A1900"># name : name of the joint</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#  return:</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#    Id of the joint (Id)</span></span>
+robot<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">model</span></span><span style="color: #990000">().</span><span style="font-weight: bold"><span style="color: #000000">getJointId</span></span><span style="color: #990000">(</span>name<span style="color: #990000">)</span>
 
-<span style="font-style: italic"><span style="color: #9A1900"># Set whether right hand side of constraint is constant</span></span>
+<span style="font-style: italic"><span style="color: #9A1900"># create a relative transformation between two joints</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#  name :     name of the constraint,</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#  constant : Boolean value.</span></span>
-ps<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">setConstantRightHandSide</span></span> <span style="color: #990000">(</span>name<span style="color: #990000">,</span> constant<span style="color: #990000">)</span>
+<span style="font-style: italic"><span style="color: #9A1900">#  name :     name of the function,</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#  robot :    pinocchio device,</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#  joint1 :    Id of the first joint,</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#  joint2 :    Id of the second joint,</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#  relativeTransform :    relative transformation of joint2 frame in joint1 frame,</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#  mask :    list of 6 Boolean to select active coordinates of the constraint.</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#  return : function that can be used to create constraints</span></span>
+pc <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #000000">Transformation</span></span><span style="color: #990000">(</span>name<span style="color: #990000">,</span> robot<span style="color: #990000">,</span> joint2<span style="color: #990000">,</span> joint1<span style="color: #990000">,</span> relativeTransform<span style="color: #990000">,</span> mask<span style="color: #990000">)</span>
 
-<span style="font-style: italic"><span style="color: #9A1900"># Create nodes of the constraint graph</span></span>
+<span style="font-style: italic"><span style="color: #9A1900"># create an implicit constraint</span></span>
+<span style="font-style: italic"><span style="color: #9A1900"># f : function describing the constraint,</span></span>
+<span style="font-style: italic"><span style="color: #9A1900"># cts: ComparisonTypes mask</span></span>
+<span style="font-style: italic"><span style="color: #9A1900"># mask : mask</span></span>
+constraint <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #000000">Implicit</span></span><span style="color: #990000">(</span>f<span style="color: #990000">,</span> cts<span style="color: #990000">,</span> mask<span style="color: #990000">)</span>
+
+<span style="font-style: italic"><span style="color: #9A1900"># Create states of the constraint graph</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#  nodeList: list of names of the nodes to be created.</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#  stateName: name of the state to be created.</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#  waypoint: if the state is a waypoint.</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#  priority: affects how the states are ordered.</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#  note:     Nodes are ordered according to the list passed to this method. When</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#            determining to which node a configuration belongs, constraints of</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#            the nodes are tested in the creation order. As a consequence, it</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#            is important that if the subspace defined by "node1" is a subset of</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#            the subspace defined by "node2", "node1" is placed before "node2"</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#  note:     States are ordered according to the list passed to this method. When</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#            determining to which state a configuration belongs, constraints of</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#            the states are tested in the creation order. As a consequence, it</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#            is important that if the subspace defined by "state1" is a subset of</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#            the subspace defined by "state2", "state1" is placed before "state2"</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#            in the input list.</span></span>
-graph<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">createNode</span></span> <span style="color: #990000">(</span>nodeList<span style="color: #990000">)</span>
+graph<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">createState</span></span> <span style="color: #990000">(</span>stateName<span style="color: #990000">,</span> waypoint<span style="color: #990000">,</span> priority<span style="color: #990000">)</span>
 
-<span style="font-style: italic"><span style="color: #9A1900"># Create an edge of the constraint graph</span></span>
+<span style="font-style: italic"><span style="color: #9A1900"># Create an transition of the constraint graph</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#  node1:     name of the node the edge starts from,</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#  node2:     name of the node the edge reaches,</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#  edgeName:  name of the edge,</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#  belongsTo: name of the node in the subspace defined by which paths of the edge lie.</span></span>
-graph<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">createEdge</span></span> <span style="color: #990000">(</span>node1<span style="color: #990000">,</span> node2<span style="color: #990000">,</span> edgeName<span style="color: #990000">,</span> weight<span style="color: #990000">,</span> belongsTo<span style="color: #990000">)</span>
+<span style="font-style: italic"><span style="color: #9A1900">#  state1:     state the transition starts from,</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#  state2:     state the transition reaches,</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#  transitionName:  name of the transition,</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#  belongsTo: state in the subspace defined by which paths of the transition lie.</span></span>
+graph<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">createTransition</span></span> <span style="color: #990000">(</span>state1<span style="color: #990000">,</span> state2<span style="color: #990000">,</span> transitionName<span style="color: #990000">,</span> weight<span style="color: #990000">,</span> belongsTo<span style="color: #990000">)</span>
 
-<span style="font-style: italic"><span style="color: #9A1900"># Set constraint relative to nodes and edges</span></span>
+<span style="font-style: italic"><span style="color: #9A1900"># Set constraint relative to state</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#  nodeName :   name of the node</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#  edgeName :   name of the edge</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#  c1, c2   :  names of constraints to be passed to the node or edge</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#  note:        one and only one argument between node and edge should be</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#              provided.</span></span>
-graph<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">addConstraints</span></span> <span style="color: #990000">(</span>node <span style="color: #990000">=</span> nodeName<span style="color: #990000">,</span> edge <span style="color: #990000">=</span> edgeName<span style="color: #990000">,</span> constraints <span style="color: #990000">=</span> <span style="color: #990000">\</span>
-                      <span style="font-weight: bold"><span style="color: #000000">Constraints</span></span> <span style="color: #990000">(</span>numConstraints <span style="color: #990000">=</span> <span style="color: #990000">[</span><span style="color: #FF0000">'c1'</span><span style="color: #990000">,</span> <span style="color: #FF0000">'c2'</span><span style="color: #990000">]))</span>
+<span style="font-style: italic"><span style="color: #9A1900">#  stateName :   name of the state</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#  cs   : list of constraints to be passed to the state</span></span>
+graph<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">addNumericalConstraintsToState</span></span> <span style="color: #990000">(</span>state<span style="color: #990000">,</span> cs<span style="color: #990000">)</span>
 
-<span style="font-style: italic"><span style="color: #9A1900"># Project a configuration on the supspace defined by a node</span></span>
+<span style="font-style: italic"><span style="color: #9A1900"># Set constraint relative to transition</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#  nodeName: name of the node,</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#  transitionName :   name of the transition</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#  cs   : list of constraints to be passed to the transition</span></span>
+graph<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">addNumericalConstraintsToTransition</span></span> <span style="color: #990000">(</span>transition<span style="color: #990000">,</span> cs<span style="color: #990000">)</span>
+
+<span style="font-style: italic"><span style="color: #9A1900"># Project a configuration on the supspace defined by a state</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#  stat:  state,</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#  q:        input configuration.</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#  return:</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#    whether projection succeeded (Boolean),</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#    projected configuration,</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#    numerical error</span></span>
-graph<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">applyNodeConstraints</span></span> <span style="color: #990000">(</span>nodeName<span style="color: #990000">,</span> q<span style="color: #990000">)</span>
+graph<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">applyStateConstraints</span></span> <span style="color: #990000">(</span>state<span style="color: #990000">,</span> q<span style="color: #990000">)</span>
 
-<span style="font-style: italic"><span style="color: #9A1900"># Project a configuration on a leaf of the foliation defined by an edge</span></span>
+<span style="font-style: italic"><span style="color: #9A1900"># Project a configuration on a leaf of the foliation defined by an transition</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#  edgeName: name of the edge,</span></span>
+<span style="font-style: italic"><span style="color: #9A1900">#  transition: transition,</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#  q1:       configuration defining the leaf (right hand side of constraint),</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#  q2:       configuration to project on the leaf.</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#</span></span>
@@ -1000,7 +993,7 @@ graph<span style="color: #990000">.</span><span style="font-weight: bold"><span 
 <span style="font-style: italic"><span style="color: #9A1900">#    whether projection succeeded (Boolean),</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#    projected configuration,</span></span>
 <span style="font-style: italic"><span style="color: #9A1900">#    numerical error</span></span>
-graph<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">generateTargetConfig</span></span> <span style="color: #990000">(</span>edgeName<span style="color: #990000">,</span> q1<span style="color: #990000">,</span> q2<span style="color: #990000">)</span>
+graph<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">generateTargetConfig</span></span> <span style="color: #990000">(</span>Name<span style="color: #990000">,</span> q1<span style="color: #990000">,</span> q2<span style="color: #990000">)</span>
 </tt></pre></div></div>
 </div>
 </div>
@@ -1010,7 +1003,7 @@ graph<span style="color: #990000">.</span><span style="font-weight: bold"><span 
 <div id="footer">
 <div id="footer-text">
 Last updated
- 2022-10-04 16:08:08 CEST
+ 2025-11-27 10:51:36 UTC
 </div>
 </div>
 </body>

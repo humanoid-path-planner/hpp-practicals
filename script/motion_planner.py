@@ -1,16 +1,16 @@
 class MotionPlanner:
-    def __init__(self, robot, ps):
+    def __init__(self, robot, problem, roadmap):
         self.robot = robot
-        self.ps = ps
+        self.problem = problem
+        self.roadmap = roadmap
 
     def solveBiRRT(self, maxIter=float("inf")):
         print("Method solveBiRRT is not implemented yet")
-        self.ps.prepareSolveStepByStep()
         finished = False
 
         # In the framework of the course,
         # we restrict ourselves to 2 connected components.
-        nbCC = self.ps.numberConnectedComponents()
+        nbCC = self.roadmap.numberConnectedComponents()
         if nbCC != 2:
             raise Exception("There should be 2 connected components.")
 
@@ -20,20 +20,15 @@ class MotionPlanner:
             # write your algorithm here
             # RRT end
             # Check if the problem is solved.
-            nbCC = self.ps.numberConnectedComponents()
+            # Check if problem is solved
+            nbCC = self.roadmap.numberConnectedComponents()
             if nbCC == 1:
-                # Problem solved
+                print("Problem solved!")
                 finished = True
                 break
             iter = iter + 1
             if iter > maxIter:
                 break
         if finished:
-            self.ps.finishSolveStepByStep()
-            return self.ps.numberPaths() - 1
-
-    def solvePRM(self):
-        self.ps.prepareSolveStepByStep()
-        # PRM begin
-        # PRM end
-        self.ps.finishSolveStepByStep()
+            path = self.problem.target().computePath(self.roadmap)
+            return path
