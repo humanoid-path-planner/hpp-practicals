@@ -8,7 +8,7 @@ from pyhpp.constraints import (
     Transformation,
 )
 from pyhpp.core import ConfigurationShooter, Discretized  # noqa: F401
-from pyhpp.gepetto import Viewer
+from pyhpp.gepetto import Viewer #noqa
 from pyhpp.manipulation import (
     Device,
     Graph,

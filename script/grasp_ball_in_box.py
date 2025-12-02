@@ -1,14 +1,14 @@
 import numpy as np
 from pinocchio import SE3, Quaternion
 from pyhpp.constraints import (
-    ComparisonType,
-    ComparisonTypes,
-    Implicit,
-    RelativeTransformation,
-    Transformation,
+    ComparisonType,#noqa
+    ComparisonTypes,#noqa
+    Implicit,#noqa
+    RelativeTransformation,#noqa
+    Transformation,#noqa
 )
 from pyhpp.core import ConfigurationShooter, Discretized  # noqa: F401
-from pyhpp.gepetto import Viewer
+from pyhpp.gepetto import Viewer #noqa
 from pyhpp.manipulation import (
     Device,
     Graph,
