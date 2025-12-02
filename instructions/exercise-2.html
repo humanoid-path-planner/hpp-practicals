@@ -756,7 +756,7 @@ asciidoc.install(2);
 by Lorenzo Bettini
 http://www.lorenzobettini.it
 http://www.gnu.org/software/src-highlite -->
-<pre><tt>gepetto-gui</tt></pre></div></div>
+<pre><tt>gepetto-gui -c basic</tt></pre></div></div>
 <div class="paragraph"><p>In the second terminal, type</p></div>
 <div class="listingblock">
 <div class="content"><!-- Generator: GNU source-highlight
@@ -771,7 +771,7 @@ python -i grasp_ball<span style="color: #990000">.</span>py</tt></pre></div></di
 by Lorenzo Bettini
 http://www.lorenzobettini.it
 http://www.gnu.org/software/src-highlite -->
-<pre><tt><span style="color: #990000">&gt;&gt;&gt;</span> v <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #000000">Viewer</span></span><span style="color: #990000">()</span></tt></pre></div></div>
+<pre><tt><span style="color: #990000">&gt;&gt;&gt;</span> v <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #000000">Viewer</span></span><span style="color: #990000">(</span>robot<span style="color: #990000">)</span></tt></pre></div></div>
 <div class="imageblock">
 <div class="content">
 <img src="manipulation.png" alt="hpp-gui graphical interface" width="40%" />
@@ -806,7 +806,7 @@ http://www.gnu.org/software/src-highlite -->
 by Lorenzo Bettini
 http://www.lorenzobettini.it
 http://www.gnu.org/software/src-highlite -->
-<pre><tt><span style="color: #990000">&gt;&gt;&gt;</span> manipulationPlanner<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">solve</span></span> <span style="color: #990000">()</span></tt></pre></div></div>
+<pre><tt><span style="color: #990000">&gt;&gt;&gt;</span> path <span style="color: #990000">=</span> manipulationPlanner<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">solve</span></span> <span style="color: #990000">()</span></tt></pre></div></div>
 <div class="paragraph"><p>should solve the problem in a minute or so.</p></div>
 </div>
 <div class="sect2">
@@ -817,8 +817,7 @@ http://www.gnu.org/software/src-highlite -->
 by Lorenzo Bettini
 http://www.lorenzobettini.it
 http://www.gnu.org/software/src-highlite -->
-<pre><tt><span style="color: #990000">&gt;&gt;&gt;</span> p <span style="color: #990000">=</span> manipulationPlanner<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">solve</span></span> <span style="color: #990000">()</span>
-<span style="color: #990000">&gt;&gt;&gt;</span> v<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">playPath</span></span><span style="color: #990000">(</span>p<span style="color: #990000">)</span></tt></pre></div></div>
+<pre><tt><span style="color: #990000">&gt;&gt;&gt;</span> v<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #000000">playPath</span></span><span style="color: #990000">(</span>path<span style="color: #990000">)</span></tt></pre></div></div>
 <div class="paragraph"><p>You can also display the path using the path player in <code>gepetto-gui</code>.</p></div>
 </div>
 </div>
@@ -836,24 +835,26 @@ ball in the box.</p></div>
 <div class="sect1">
 <h2 id="_exercise_2">Exercise 2</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="_exercise_2_1">Exercise 2.1</h3>
 <div class="paragraph"><p>In order to help the manipulation planner, define in file
-<code>grasp_ball_in_box.py</code> a constraint graph with intermediate states like for
-instance:</p></div>
+<code>grasp_ball_in_box.py</code> a constraint graph with three additional states:</p></div>
 <div class="ulist"><ul>
 <li>
 <p>
-a state where the gripper is empty above the ball
+a state where the gripper is empty above the ball,
 </p>
 </li>
 <li>
 <p>
-a state where the gripper holds the ball above the ground.
+a state where the gripper holds the ball above the ground,
+</p>
+</li>
+<li>
+<p>
+a state where the gripper holds the ball and the ball in on the ground.
 </p>
 </li>
 </ul></div>
-<div class="paragraph"><p>The graph below provides an example.</p></div>
+<div class="paragraph"><p>The graph should look like this..</p></div>
 <div class="imageblock">
 <div class="content">
 <img src="constraintgraph.png" alt="Constraint graph" width="40%" />
@@ -866,14 +867,6 @@ a state where the gripper holds the ball above the ground.
 </td>
 <td class="content">When adding states to the graph  (<code>graph.createState</code>) the order of the additions is important: when checking in which state a configuration lies, state constraints will be checked in the order of state creation.</td>
 </tr></table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_exercise_2_2">Exercise 2.2</h3>
-<div class="paragraph"><p>Using the above constraint graph, write a script that builds a sequence of paths
-from <code>q_init</code> to <code>q_goal</code>. An example of how to generate a path from <code>q_init</code> to a grasp configuration is provided by script <code>solve_by_hand.py</code>, for the manipulation problem without box.</p></div>
-<div class="paragraph"><p>The script, named <code>solve_by_hand_with_box.py</code> should define a list of
-indices named <code>paths</code> corresponding to indices in the vector of paths. Each path should be admissible with respect to the manipulation constraints, and the concatenation of the paths should start at <code>q_init</code> and end at <code>q_goal</code>.</p></div>
 </div>
 </div>
 </div>
@@ -1003,7 +996,7 @@ graph<span style="color: #990000">.</span><span style="font-weight: bold"><span 
 <div id="footer">
 <div id="footer-text">
 Last updated
- 2025-11-27 10:51:36 UTC
+ 2025-12-01 14:33:19 UTC
 </div>
 </div>
 </body>

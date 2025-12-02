@@ -5,30 +5,28 @@ class MotionPlanner:
         self.roadmap = roadmap
 
     def solveBiRRT(self, maxIter=float("inf")):
-        print("Method solveBiRRT is not implemented yet")
         finished = False
-
-        # In the framework of the course,
-        # we restrict ourselves to 2 connected components.
-        nbCC = self.roadmap.numberConnectedComponents()
-        if nbCC != 2:
-            raise Exception("There should be 2 connected components.")
-
         iter = 0
-        while True:
-            # RRT begin
-            # write your algorithm here
-            # RRT end
-            # Check if the problem is solved.
+        maxIter = 1000
+
+        # Main RRT loop
+        print("Method solveBiRRT is not implemented yet.")
+        return None
+        while not finished and iter < maxIter:
+            iter += 1
+            #### RRT begin
+            #### RRT end
             # Check if problem is solved
             nbCC = self.roadmap.numberConnectedComponents()
             if nbCC == 1:
                 print("Problem solved!")
                 finished = True
-                break
-            iter = iter + 1
-            if iter > maxIter:
-                break
+
+        # Compute and display final path
         if finished:
             path = self.problem.target().computePath(self.roadmap)
             return path
+        else:
+            print(f"Maximum iterations ({maxIter}) reached without finding solution")
+
+

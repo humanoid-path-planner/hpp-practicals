@@ -1,6 +1,14 @@
 import numpy as np
 from pinocchio import SE3, Quaternion
-from pyhpp.core import ConfigurationShooter, Dichotomy  # noqa: F401
+from pyhpp.constraints import (
+    ComparisonType,
+    ComparisonTypes,
+    Implicit,
+    RelativeTransformation,
+    Transformation,
+)
+from pyhpp.core import ConfigurationShooter, Discretized  # noqa: F401
+from pyhpp.gepetto import Viewer
 from pyhpp.manipulation import (
     Device,
     Graph,
@@ -19,17 +27,20 @@ srdf_ball = "package://hpp_practicals/srdf/ur_benchmark/pokeball.srdf"
 urdf_ground = "package://hpp_practicals/urdf/ur_benchmark/ground.urdf"
 srdf_ground = "package://hpp_practicals/srdf/ur_benchmark/ground.srdf"
 
+urdf_box = "package://hpp_practicals/urdf/ur_benchmark/box.urdf"
+srdf_box = "package://hpp_practicals/srdf/ur_benchmark/box.srdf"
+
 robot = Device("bot")
 
 urdf.loadModel(robot, 0, "ur5", "anchor", urdf_ur5, srdf_ur5, SE3.Identity())
 urdf.loadModel(robot, 0, "pokeball", "freeflyer", urdf_ball, srdf_ball, SE3.Identity())
-
 urdf.loadModel(robot, 0, "ground", "anchor", urdf_ground, srdf_ground, SE3.Identity())
 
+box_pose = SE3(Quaternion(0, 0, 0, 1), np.array([0.3, 0, 0.04]))
+urdf.loadModel(robot, 0, "box", "anchor", urdf_box, srdf_box, box_pose)
 
-ballName = "pokeball/root_joint"
 robot.setJointBounds(
-    ballName,
+    "pokeball/root_joint",
     [
         -0.4,
         0.4,
@@ -48,47 +59,47 @@ robot.setJointBounds(
     ],
 )
 
-urdfFilenameBox = "package://hpp_practicals/urdf/ur_benchmark/box.urdf"
-srdfFilenameBox = "package://hpp_practicals/srdf/ur_benchmark/box.srdf"
-
-
-q = Quaternion(0, 0, 0, 1)
-box_pos = SE3(q, np.array([0.3, 0, 0.04]))
-urdf.loadModel(robot, 0, "box", "anchor", urdfFilenameBox, srdfFilenameBox, box_pos)
-
-model = robot.model()
-data = robot.data()
-
 problem = Problem(robot)
 
-q1 = [0, -1.57, 1.57, 0, 0, 0, 0.3, 0, 0.025, 0, 0, 0, 1]
-
-# Create graph
 graph = Graph("graph", robot, problem)
-state_placement = graph.createState("placement", False, 0)
+graph.errorThreshold(1e-4)
+graph.maxIterations(40)
 
-problem.pathValidation = Dichotomy(robot, 0)
-problem.pathProjector = ProgressiveProjector(
-    problem.distance(), problem.steeringMethod(), 0.01
-)
+pokeball = robot.model().getJointId("pokeball/root_joint")
+gripper = robot.model().getJointId("ur5/wrist_3_joint")
+I_SE3 = SE3.Identity()
+
+# Create nodes and edges
+#  Warning the order of the nodes is important. When checking in which node
+#  a configuration lies, node constraints will be checked in the order of node
+#  creation.
+
+
+# Create constraints
+
+
+# Set constraints of nodes and edges
+
+
+problem.pathValidation(Discretized(robot, 0.01))
+problem.pathProjector(ProgressiveProjector(problem.distance(), problem.steeringMethod(), 0.1))
 graph.initialize()
-q1 = np.array(q1)
+
+q1 = np.array([0, -1.57, 1.57, 0, 0, 0, 0.3, 0, 0.025, 0, 0, 0, 1])
 robot.currentConfiguration(q1)
 
 # Project initial configuration on state 'placement'
 res, q_init, error = graph.applyStateConstraints(state_placement, q1)
-q2 = q1[::].copy()
+q2 = q1.copy()
 q2[7] = 0.2
 
+# Project goal configuration on state 'placement'
 res, q_goal, error = graph.applyStateConstraints(state_placement, q2)
 
-# Define manipulation planning problem
 problem.initConfig(q_init)
 problem.addGoalConfig(q_goal)
 problem.constraintGraph(graph)
 
-manipulationPlanner = ManipulationPlanner(problem)
-manipulationPlanner.maxIterations(5000)
-# manipulationPlanner.solve()
+planner = ManipulationPlanner(problem)
 # v = Viewer (robot)
 # v.playPath (v)

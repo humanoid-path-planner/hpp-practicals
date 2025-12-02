@@ -11,7 +11,7 @@ Introduction
 Open a terminal, cd into hpp-practicals directory and open 2 tab by typing CTRL+SHIFT+T. In the first terminal, type
 [source,sh]
 ----
-gepetto-gui
+gepetto-gui -c basic
 ----
 
 In the second terminal, type
@@ -24,7 +24,7 @@ python -i grasp_ball.py
 To display the robot and environment, create again a client to +gepetto-gui+ in the python terminal:
 [source,python]
 ----
->>> v = Viewer()
+>>> v = Viewer(robot)
 ----
 
 image::manipulation.png[width="40%",alt="hpp-gui graphical interface"]
@@ -57,7 +57,7 @@ Solving the problem
 Typing
 [source,python]
 ----
->>> manipulationPlanner.solve ()
+>>> path = manipulationPlanner.solve ()
 ----
 should solve the problem in a minute or so.
 
@@ -66,8 +66,7 @@ Displaying the path
 As in exercise 1, the path can be displayed using the path player
 [source,python]
 ----
->>> p = manipulationPlanner.solve ()
->>> v.playPath(p)
+>>> v.playPath(path)
 ----
 You can also display the path using the path player in +gepetto-gui+.
 
@@ -83,30 +82,18 @@ ball in the box.
 Exercise 2
 ----------
 
-Exercise 2.1
-~~~~~~~~~~~~
-
 In order to help the manipulation planner, define in file
-+grasp_ball_in_box.py+ a constraint graph with intermediate states like for
-instance:
++grasp_ball_in_box.py+ a constraint graph with three additional states:
 
-- a state where the gripper is empty above the ball
-- a state where the gripper holds the ball above the ground.
+- a state where the gripper is empty above the ball,
+- a state where the gripper holds the ball above the ground,
+- a state where the gripper holds the ball and the ball in on the ground.
 
-The graph below provides an example.
+The graph should look like this..
 
 image::constraintgraph.png[width="40%",alt="Constraint graph"]
 
 WARNING: When adding states to the graph  (+graph.createState+) the order of the additions is important: when checking in which state a configuration lies, state constraints will be checked in the order of state creation.
-
-Exercise 2.2
-~~~~~~~~~~~~
-
-Using the above constraint graph, write a script that builds a sequence of paths
-from +q_init+ to +q_goal+. An example of how to generate a path from +q_init+ to a grasp configuration is provided by script +solve_by_hand.py+, for the manipulation problem without box.
-
-The script, named +solve_by_hand_with_box.py+ should define a list of
-indices named +paths+ corresponding to indices in the vector of paths. Each path should be admissible with respect to the manipulation constraints, and the concatenation of the paths should start at +q_init+ and end at +q_goal+.
 
 Hints
 -----

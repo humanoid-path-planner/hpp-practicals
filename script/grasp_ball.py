@@ -1,6 +1,5 @@
 import numpy as np
 from pinocchio import SE3, Quaternion
-from pinocchio import StdVec_Bool as Mask
 from pyhpp.constraints import (
     ComparisonType,
     ComparisonTypes,
@@ -8,7 +7,8 @@ from pyhpp.constraints import (
     RelativeTransformation,
     Transformation,
 )
-from pyhpp.core import ConfigurationShooter, Dichotomy  # noqa: F401
+from pyhpp.core import ConfigurationShooter, Discretized  # noqa: F401
+from pyhpp.gepetto import Viewer
 from pyhpp.manipulation import (
     Device,
     Graph,
@@ -31,13 +31,10 @@ robot = Device("bot")
 
 urdf.loadModel(robot, 0, "ur5", "anchor", urdf_ur5, srdf_ur5, SE3.Identity())
 urdf.loadModel(robot, 0, "pokeball", "freeflyer", urdf_ball, srdf_ball, SE3.Identity())
-
 urdf.loadModel(robot, 0, "ground", "anchor", urdf_ground, srdf_ground, SE3.Identity())
 
-
-ballName = "pokeball/root_joint"
 robot.setJointBounds(
-    ballName,
+    "pokeball/root_joint",
     [
         -0.4,
         0.4,
@@ -58,9 +55,13 @@ robot.setJointBounds(
 
 problem = Problem(robot)
 
-q1 = [0, -1.57, 1.57, 0, 0, 0, 0.3, 0, 0.025, 0, 0, 0, 1]
-
 graph = Graph("graph", robot, problem)
+graph.errorThreshold(1e-4)
+graph.maxIterations(40)
+
+pokeball = robot.model().getJointId("pokeball/root_joint")
+gripper = robot.model().getJointId("ur5/wrist_3_joint")
+I_SE3 = SE3.Identity()
 
 # Create nodes and edges
 #  Warning the order of the nodes is important. When checking in which node
@@ -82,12 +83,9 @@ transition_release_ball = graph.createTransition(
     state_grasp, state_placement, "release-ball", 1, state_grasp
 )
 
-
-joint2 = robot.model().getJointId("pokeball/root_joint")
-joint1 = robot.model().getJointId("ur5/wrist_3_joint")
-Id = SE3.Identity()
-
-m = [
+# Create constraints
+# Placement
+mask = [
     False,
     False,
     True,
@@ -95,20 +93,14 @@ m = [
     True,
     False,
 ]
-q = Quaternion(0, 0, 0, 1)
-ballGround = SE3(q, np.array([0, 0, 0.025]))
-pc = Transformation("placement_constraint", robot, joint2, Id, ballGround, m)
+ballOnGround = SE3(Quaternion(0, 0, 0, 1), np.array([0, 0, 0.025]))
+function = Transformation("placement_constraint", robot, pokeball, I_SE3, ballOnGround, mask)
 cts = ComparisonTypes()
-cts[:] = (
-    ComparisonType.EqualToZero,
-    ComparisonType.EqualToZero,
-    ComparisonType.EqualToZero,
-)
-implicit_mask = [True, True, True]
-placement_constraint = Implicit(pc, cts, implicit_mask)
+cts[:] = 3 * (ComparisonType.EqualToZero,)
+placement_constraint = Implicit(function, cts, [True, True, True])
 
-
-m = [
+# Placement complement
+mask = [
     True,
     True,
     False,
@@ -117,43 +109,24 @@ m = [
     True,
 ]
 
-pc = Transformation(
-    "placement__complement_constraint", robot, joint2, Id, ballGround, m
+function = Transformation(
+    "placement_complement_constraint", robot, pokeball, I_SE3, ballOnGround, mask
 )
-cts = ComparisonTypes()
-cts[:] = (
-    ComparisonType.Equality,
-    ComparisonType.Equality,
-    ComparisonType.Equality,
-)
-implicit_mask = [True, True, True]
-placement_complement_constraint = Implicit(pc, cts, implicit_mask)
+cts[:] = 3 * (ComparisonType.Equality,)
+placement_complement_constraint = Implicit(function, cts, [True, True, True])
 
-# Create constraint of relative position of the ball in the gripper when ball
-# is grasped
-q = Quaternion(0.5, 0.5, -0.5, 0.5)
-ballInGripper = SE3(q, np.array([0, 0.137, 0]))
-m = Mask()
-m[:] = (True,) * 6
-pc = RelativeTransformation("grasp", robot, joint1, joint2, ballInGripper, Id, m)
+# Grasp
+ballInGripper = SE3(Quaternion(0.5, 0.5, -0.5, 0.5), np.array([0, 0.137, 0]))
+mask = 6 * [True,]
+function = RelativeTransformation("grasp", robot, gripper, pokeball, ballInGripper, I_SE3, mask)
 cts = ComparisonTypes()
-cts[:] = (
-    ComparisonType.EqualToZero,
-    ComparisonType.EqualToZero,
-    ComparisonType.EqualToZero,
-    ComparisonType.EqualToZero,
-    ComparisonType.EqualToZero,
-    ComparisonType.EqualToZero,
-)
-grasp_constraint = Implicit(pc, cts, m)
-
-problem.setConstantRightHandSide(placement_constraint, True)
-problem.setConstantRightHandSide(placement_complement_constraint, False)
+cts[:] = 6 * (ComparisonType.EqualToZero,)
+grasp_constraint = Implicit(function, cts, mask)
 
 # Set constraints of nodes and edges
+
 graph.addNumericalConstraintsToState(state_placement, [placement_constraint])
 graph.addNumericalConstraintsToState(state_grasp, [grasp_constraint])
-
 graph.addNumericalConstraintsToTransition(
     transition_transit, [placement_complement_constraint]
 )
@@ -161,46 +134,25 @@ graph.addNumericalConstraintsToTransition(
     transition_grasp_ball, [placement_complement_constraint]
 )
 
-problem.pathValidation = Dichotomy(robot, 0)
-problem.pathProjector = ProgressiveProjector(
-    problem.distance(), problem.steeringMethod(), 0.1
-)
+problem.pathValidation(Discretized(robot, 0.01))
+problem.pathProjector(ProgressiveProjector(problem.distance(), problem.steeringMethod(), 0.1))
 graph.initialize()
 
-q1 = np.array(q1)
+q1 = np.array([0, -1.57, 1.57, 0, 0, 0, 0.3, 0, 0.025, 0, 0, 0, 1])
 robot.currentConfiguration(q1)
 
 # Project initial configuration on state 'placement'
 res, q_init, error = graph.applyStateConstraints(state_placement, q1)
-q2 = q1[::]
+q2 = q1.copy()
 q2[7] = 0.2
 
 # Project goal configuration on state 'placement'
 res, q_goal, error = graph.applyStateConstraints(state_placement, q2)
 
-# Define manipulation planning problem
 problem.initConfig(q_init)
 problem.addGoalConfig(q_goal)
 problem.constraintGraph(graph)
 
-
-manipulationPlanner = ManipulationPlanner(problem)
+planner = ManipulationPlanner(problem)
 # v = Viewer (robot)
 # v.playPath (v)
-
-
-# # Build relative position of the ball with respect to the gripper
-# for i in range(100):
-#     q = problem.configurationShooter().shoot()
-#     res, q3, err = graph.generateTargetConfig(transition_grasp_ball, q_init, q)
-#     configValid, report = problem.isConfigValid(q3)
-#     if res and configValid:
-#         break
-
-# if res:
-#     robot.currentConfiguration(q3)
-#     gripperPose = Transform(robot.getJointPosition('ur5/wrist_3_joint'))
-#     ballPose = Transform(robot.getJointPosition(ballName))
-#     gripperGraspsBall = gripperPose.inverse() * ballPose
-#     gripperAboveBall = Transform(gripperGraspsBall)
-#     gripperAboveBall.translation[2] += 0.1

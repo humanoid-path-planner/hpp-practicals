@@ -2,6 +2,7 @@ import numpy as np
 from motion_planner import MotionPlanner
 from pinocchio import SE3
 from pyhpp.core import Problem, Roadmap, WeighedDistance
+from pyhpp.gepetto import Viewer
 from pyhpp.pinocchio import Device, urdf
 
 # Robot configuration
