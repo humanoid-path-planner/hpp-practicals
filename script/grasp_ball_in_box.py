@@ -1,14 +1,14 @@
 import numpy as np
 from pinocchio import SE3, Quaternion
 from pyhpp.constraints import (
-    ComparisonType,#noqa
-    ComparisonTypes,#noqa
-    Implicit,#noqa
-    RelativeTransformation,#noqa
-    Transformation,#noqa
+    ComparisonType,  # noqa
+    ComparisonTypes,  # noqa
+    Implicit,  # noqa
+    RelativeTransformation,  # noqa
+    Transformation,  # noqa
 )
 from pyhpp.core import ConfigurationShooter, Discretized  # noqa: F401
-from pyhpp.gepetto import Viewer #noqa
+from pyhpp.gepetto import Viewer  # noqa
 from pyhpp.manipulation import (
     Device,
     Graph,
@@ -82,7 +82,9 @@ I_SE3 = SE3.Identity()
 
 
 problem.pathValidation(Discretized(robot, 0.01))
-problem.pathProjector(ProgressiveProjector(problem.distance(), problem.steeringMethod(), 0.1))
+problem.pathProjector(
+    ProgressiveProjector(problem.distance(), problem.steeringMethod(), 0.1)
+)
 graph.initialize()
 
 q1 = np.array([0, -1.57, 1.57, 0, 0, 0, 0.3, 0, 0.025, 0, 0, 0, 1])

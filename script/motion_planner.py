@@ -28,5 +28,3 @@ class MotionPlanner:
             return path
         else:
             print(f"Maximum iterations ({maxIter}) reached without finding solution")
-
-

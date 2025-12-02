@@ -8,7 +8,7 @@ from pyhpp.constraints import (
     Transformation,
 )
 from pyhpp.core import ConfigurationShooter, Discretized  # noqa: F401
-from pyhpp.gepetto import Viewer #noqa
+from pyhpp.gepetto import Viewer  # noqa
 from pyhpp.manipulation import (
     Device,
     Graph,
@@ -94,7 +94,9 @@ mask = [
     False,
 ]
 ballOnGround = SE3(Quaternion(0, 0, 0, 1), np.array([0, 0, 0.025]))
-function = Transformation("placement_constraint", robot, pokeball, I_SE3, ballOnGround, mask)
+function = Transformation(
+    "placement_constraint", robot, pokeball, I_SE3, ballOnGround, mask
+)
 cts = ComparisonTypes()
 cts[:] = 3 * (ComparisonType.EqualToZero,)
 placement_constraint = Implicit(function, cts, [True, True, True])
@@ -117,8 +119,12 @@ placement_complement_constraint = Implicit(function, cts, [True, True, True])
 
 # Grasp
 ballInGripper = SE3(Quaternion(0.5, 0.5, -0.5, 0.5), np.array([0, 0.137, 0]))
-mask = 6 * [True,]
-function = RelativeTransformation("grasp", robot, gripper, pokeball, ballInGripper, I_SE3, mask)
+mask = 6 * [
+    True,
+]
+function = RelativeTransformation(
+    "grasp", robot, gripper, pokeball, ballInGripper, I_SE3, mask
+)
 cts = ComparisonTypes()
 cts[:] = 6 * (ComparisonType.EqualToZero,)
 grasp_constraint = Implicit(function, cts, mask)
@@ -135,7 +141,9 @@ graph.addNumericalConstraintsToTransition(
 )
 
 problem.pathValidation(Discretized(robot, 0.01))
-problem.pathProjector(ProgressiveProjector(problem.distance(), problem.steeringMethod(), 0.1))
+problem.pathProjector(
+    ProgressiveProjector(problem.distance(), problem.steeringMethod(), 0.1)
+)
 graph.initialize()
 
 q1 = np.array([0, -1.57, 1.57, 0, 0, 0, 0.3, 0, 0.025, 0, 0, 0, 1])
