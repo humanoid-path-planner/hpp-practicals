@@ -8,7 +8,6 @@ from pyhpp.constraints import (
     Transformation,  # noqa
 )
 from pyhpp.core import ConfigurationShooter, Discretized  # noqa: F401
-from pyhpp.viser import Viewer  # noqa
 from pyhpp.manipulation import (
     Device,
     Graph,
@@ -17,6 +16,7 @@ from pyhpp.manipulation import (
     ProgressiveProjector,
     urdf,
 )
+from pyhpp.viser import Viewer  # noqa
 
 state_placement = None  # please linters
 
