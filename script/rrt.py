@@ -2,7 +2,7 @@ import numpy as np
 from motion_planner import MotionPlanner
 from pinocchio import SE3
 from pyhpp.core import Problem, Roadmap, WeighedDistance
-from pyhpp.gepetto import Viewer  # noqa
+from pyhpp.viser import Viewer  # noqa
 from pyhpp.pinocchio import Device, urdf
 
 # Robot configuration
@@ -64,6 +64,7 @@ m = MotionPlanner(robot, problem, roadmap)
 path = m.solveBiRRT(maxIter=1000)
 
 # v = Viewer(robot)
+# v.initViewer(open=True, loadModel=True)
 # v(q1)
 # v(q2)
-# v.playPath(path)
+# v.loadPath(path)

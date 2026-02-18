@@ -8,7 +8,7 @@ from pyhpp.constraints import (
     Transformation,
 )
 from pyhpp.core import ConfigurationShooter, Discretized  # noqa: F401
-from pyhpp.gepetto import Viewer  # noqa
+from pyhpp.viser import Viewer  # noqa
 from pyhpp.manipulation import (
     Device,
     Graph,
@@ -163,4 +163,6 @@ problem.constraintGraph(graph)
 
 planner = ManipulationPlanner(problem)
 # v = Viewer (robot)
-# v.playPath (v)
+# v.initViewer(open=True, loadModel=True)
+# v.loadPath(path)
+
