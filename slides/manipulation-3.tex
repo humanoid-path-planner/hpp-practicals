@@ -26,14 +26,8 @@ Constraints to which manipulation motions are subject can be expressed numerical
 \begin{itemize}
 \item Numerical constraints:
   $$f (\conf) = 0,\ \ \ \begin{array}{l}m\in\entiernaturel,\\ f\in C^1(\CS,\real^m)\end{array} $$
-  \begin{itemize}
-    \item \texttt{\scriptsize setConstantRightHandSide(True)}
-  \end{itemize}
 \item Parameterizable numerical constraints:
   $$f (\conf) = f_0,\ \ \ \begin{array}{l}m\in\entiernaturel,\\ f\in C^1(\CS,\real^m) \\ f_0\in\real^m\end{array} $$
-  \begin{itemize}
-    \item \texttt{\scriptsize setConstantRightHandSide(False)}
-  \end{itemize}
 \end{itemize}
 
 \end{frame}
@@ -277,6 +271,177 @@ Motion constraints
     \item [] return failure
   \end{itemize}
 
+\end {frame}
+
+\begin {frame} {Newton-Raphson algorithm}
+  \parbox {.5\linewidth} {
+    \centerline {
+      \includegraphics [width=\linewidth] {figures/seq/romeo-7.png}
+    }
+  }
+  \hspace*{.05\linewidth}
+  \parbox {.39\linewidth} {
+    Constraints
+    \begin {itemize}
+    \item quasi-static equilibrium (15)
+    \item both hands hold the placard (10)
+    \end{itemize}
+  }
+  \centerline {
+    Goal: Generate a configuration satisfying the constraints.
+  }
+\end {frame}
+
+\begin {frame} {Newton-Raphson algorithm}
+  \parbox {.5\linewidth} {
+    \centerline {
+      \includegraphics [width=\linewidth] {figures/seq/romeo-0.png}
+    }
+  }
+  \hspace*{.05\linewidth}
+  \parbox {.39\linewidth} {
+    Constraints
+    \begin {itemize}
+    \item quasi-static equilibrium (15)
+    \item both hands hold the placard (10)
+    \end{itemize}
+  }
+  \centerline {
+    Shoot random configuration
+  }
+\end {frame}
+
+\begin {frame} {Newton-Raphson algorithm}
+  \parbox {.5\linewidth} {
+    \centerline {
+      \includegraphics [width=\linewidth] {figures/seq/romeo-1.png}
+    }
+  }
+  \hspace*{.05\linewidth}
+  \parbox {.39\linewidth} {
+    Constraints
+    \begin {itemize}
+    \item quasi-static equilibrium (15)
+    \item both hands hold the placard (10)
+    \end{itemize}
+  }
+  \centerline {
+    Solve linearized system
+  }
+\end {frame}
+
+\begin {frame} {Newton-Raphson algorithm}
+  \parbox {.5\linewidth} {
+    \centerline {
+      \includegraphics [width=\linewidth] {figures/seq/romeo-2.png}
+    }
+  }
+  \hspace*{.05\linewidth}
+  \parbox {.39\linewidth} {
+    Constraints
+    \begin {itemize}
+    \item quasi-static equilibrium (15)
+    \item both hands hold the placard (10)
+    \end{itemize}
+  }
+  \centerline {
+    Solve linearized system
+  }
+\end {frame}
+
+\begin {frame} {Newton-Raphson algorithm}
+  \parbox {.5\linewidth} {
+    \centerline {
+      \includegraphics [width=\linewidth] {figures/seq/romeo-3.png}
+    }
+  }
+  \hspace*{.05\linewidth}
+  \parbox {.39\linewidth} {
+    Constraints
+    \begin {itemize}
+    \item quasi-static equilibrium (15)
+    \item both hands hold the placard (10)
+    \end{itemize}
+  }
+  \centerline {
+    Solve linearized system
+  }
+\end {frame}
+
+\begin {frame} {Newton-Raphson algorithm}
+  \parbox {.5\linewidth} {
+    \centerline {
+      \includegraphics [width=\linewidth] {figures/seq/romeo-4.png}
+    }
+  }
+  \hspace*{.05\linewidth}
+  \parbox {.39\linewidth} {
+    Constraints
+    \begin {itemize}
+    \item quasi-static equilibrium (15)
+    \item both hands hold the placard (10)
+    \end{itemize}
+  }
+  \centerline {
+    Solve linearized system
+  }
+\end {frame}
+
+\begin {frame} {Newton-Raphson algorithm}
+  \parbox {.5\linewidth} {
+    \centerline {
+      \includegraphics [width=\linewidth] {figures/seq/romeo-5.png}
+    }
+  }
+  \hspace*{.05\linewidth}
+  \parbox {.39\linewidth} {
+    Constraints
+    \begin {itemize}
+    \item quasi-static equilibrium (15)
+    \item both hands hold the placard (10)
+    \end{itemize}
+  }
+  \centerline {
+    Solve linearized system
+  }
+\end {frame}
+
+\begin {frame} {Newton-Raphson algorithm}
+  \parbox {.5\linewidth} {
+    \centerline {
+      \includegraphics [width=\linewidth] {figures/seq/romeo-6.png}
+    }
+  }
+  \hspace*{.05\linewidth}
+  \parbox {.39\linewidth} {
+    Constraints
+    \begin {itemize}
+    \item quasi-static equilibrium (15)
+    \item both hands hold the placard (10)
+    \end{itemize}
+  }
+  \centerline {
+    Solve linearized system
+  }
+\end {frame}
+
+\begin {frame} {Newton-Raphson algorithm}
+  \parbox {.5\linewidth} {
+    \centerline {
+      \includegraphics [width=\linewidth] {figures/seq/romeo-7.png}
+    }
+  }
+  \hspace*{.05\linewidth}
+  \parbox {.39\linewidth} {
+    Constraints
+    \begin {itemize}
+    \item quasi-static equilibrium (15)
+    \item both hands hold the placard (10)
+    \end{itemize}
+  }
+  \centerline {
+    Result: a configuration that satisfies the constraints (up to given threshold).
+  }
 \end {frame}
 
 %
