@@ -16,7 +16,7 @@
 
 \begin{frame} {The factory}
   \parbox{.39\linewidth} {
-  Given all the possible grasps (defined by grippers and handle), a factory builds the constraint
+  Given all the possible grasps (defined by grippers and handles), a factory builds the constraint
   graph with all possible states
   }
   \parbox{.59\linewidth} {
@@ -42,6 +42,72 @@
   \begin{center}
     \includegraphics[width=.9\linewidth]{figures/constraint-graph-waypoints.png}
   \end{center}
+\end{frame}
+
+\begin{frame} {Motions on Lie groups}
+  \parbox{.39\linewidth} {
+    \begin{center}
+      \includegraphics[width=\linewidth]{figures/manipulation-problem.png}
+    \end{center}
+  }
+  \parbox{.57\linewidth} {
+    The configuration space of a manipulation problem, here $\CS=\real^6\times\real^6\times SE(3)$
+    \begin{itemize}
+    \item is a Cartesian product of $\real^n$, $SO(2)$, $SO(3)$, $SE(2)$, $SE(3)$
+    \end{itemize}
+  }
+  Each of those space share the properties of Lie groups.
+\end{frame}
+
+\begin{frame} {Motions on Lie groups}
+  The elements and derivatives of those space are represented by vectors.
+  \vskip .5cm
+  \begin{center}
+  \begin{tabular}{|l|c|c|}
+    \hline
+    Lie group type & configuration & velocity  \\
+    \hline
+    $SE(3)$ & $(x_1,x_2,x_3,p_1,\cdots,p_4)\in\real^7$ & $(\mathbf{v},\omega)\in\real^6$ \\
+    $SE(2)$ & $(x_1,x_2,\cos\theta,\sin\theta)\in\real^4$ & $(\mathbf{v},\dot{\theta})\in\real^3$\\
+    $SO(3)$ & $(p_1,p_2,p_3,p_4)\in\real^4$ & $\omega\in\real^3$\\
+    $SO(2)$ & $(\cos\theta,\sin\theta)\in\real^2$ & $\dot{\theta}\in\real$\\
+    \hline
+  \end{tabular}
+  \end{center}
+  \parbox{.69\linewidth} {
+  $$
+  \left(q_1 \ \hdots \ q_6 \ q_7 \ \hdots \ q_{12} \ x \ y \ z \ p_1 \ p_2 \ p_3 \ p_4\right)
+  $$
+  }
+  \parbox{.29\linewidth} {
+    \includegraphics[width=\linewidth]{figures/manipulation-problem.png}
+  }
+\end{frame}
+
+\begin{frame} {Motions on Lie groups}
+  $$\conf=
+  \left(
+  \begin{array}{ll}
+    \real^6 &\left\{\begin{array}{l}q_1 \\ \vdots \\ q_6 \end{array}\right.\\
+    \real^6 &\left\{\begin{array}{l} q_7 \\ \vdots \\ q_{12} \end{array}\right.\\
+    SE(3)  &\left\{\begin{array}{l} x \\ y \\ z \\ p_1 \\ p_2 \\ p_3 \\ p_4\end{array}\right.
+  \end{array}\right) \hspace*{1cm}
+  \dconf=
+  \left(
+  \begin{array}{ll}
+    \real^6 &\left\{\begin{array}{l}\dot{q}_1 \\ \vdots \\ \dot{q}_6 \end{array}\right.\\
+    \real^6 &\left\{\begin{array}{l} \dot{q}_7 \\ \vdots \\ \dot{q}_{12} \end{array}\right.\\
+    \real^6 &\left\{\begin{array}{l} \mathbf{v}\\ \omega \end{array}\right.
+  \end{array}\right) \hspace*{1cm}
+  $$
+\end{frame}
+
+\begin{frame} {Motions on Lie groups}
+  \begin{itemize}
+  \item $\conf\oplus\dconf\in\CS,\ \conf\in\CS, \dconf\in\TCS$, configuration reached from $\conf$ after following the constant velocity $\dconf$ during a unit time,
+  \item $\conf_2\ominus\conf_1\in\TCS,\ \conf_1\in\CS, \conf_2\in\CS$, constant velocity that moves from $\conf_1$ to $\conf_2$ in unit time.
+  \item $\conf_1 + t (\conf_2\ominus\conf_1)$ linear interpolation between $\conf_1$ and $\conf_2$.
+  \end{itemize}
 \end{frame}
 
 \begin{frame} {Resources}
