@@ -1,7 +1,7 @@
 <?xml version='1.0'?>
 <package format='3'>
   <name>hpp_practicals</name>
-  <version>8.0.0</version>
+  <version>9.0.0</version>
   <description>Practicals for HPP</description>
   <author>Florent Lamiraux</author>
   <maintainer email='guilhem.saurel@laas.fr'>Guilhem Saurel</maintainer>
